@@ -1,0 +1,62 @@
+[ai_generated]
+source_csv = "ai_generated.csv"
+text_field = "text"
+label_field = "label"
+scope = "body"
+positive_label = "ai_generated"
+backend = "sklearn"
+analyzer = "char_wb"
+ngram = [3, 5]
+min_df = 2
+max_features = 80000
+c = 1.0
+class_weight = "balanced"
+
+[mt_translation]
+source_csv = "mt_translation.csv"
+text_field = "text"
+label_field = "label"
+scope = "body"
+positive_label = "ai_translated_ua"
+backend = "sklearn"
+analyzer = "word"
+ngram = [1, 3]
+min_df = 3
+max_features = 150000
+c = 1.0
+class_weight = "balanced"
+
+[jeansa]
+source_csv = "jeansa.csv"
+text_field = "text"
+label_field = "label"
+scope = "body"
+positive_label = "sponsored"
+backend = "sklearn"
+analyzer = "char_wb"
+ngram = [3, 5]
+min_df = 3
+max_features = 150000
+c = 1.0
+class_weight = "balanced"
+split_field = "split"
+threshold_objective = "target_recall"
+target_recall = 0.99
+threshold_candidates = "exact"
+
+[clickbait]
+source_csv = "clickbait.csv"
+text_field = "text"
+label_field = "label"
+scope = "title"
+positive_label = "clickbait"
+backend = "transformers"
+split_field = "split"
+group_field = "outlet"
+model_name = "xlm-roberta-base"
+epochs = 6
+learning_rate = 0.00002
+batch_size = 16
+max_length = 64
+weight_decay = 0.01
+threshold_plateau_tolerance = 0.005

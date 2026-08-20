@@ -1,0 +1,59 @@
+[project]
+name = "court-of-truth"
+version = "0.2.0"
+description = "Criminalist forensic layer: key-free ML detectors for Ukrainian news analysis"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "beautifulsoup4>=4.13",
+    "fastapi>=0.115",
+    "httpx>=0.28",
+    "joblib>=1.4",
+    "numpy>=2.5,<2.6",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.7",
+    "scikit-learn>=1.9,<1.10",
+    "scipy>=1.18,<1.19",
+    "torch>=2.2,<2.3; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+    "torch>=2.8; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "transformers>=4.52,<5",
+    "uvicorn[standard]",
+]
+
+[dependency-groups]
+dev = ["httpx2", "mypy", "pytest", "pytest-asyncio", "pytest-cov", "ruff"]
+training = ["pandas>=2.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/court"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "training", "tests"]
+extend-exclude = ["demo"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PTH", "RUF", "ANN", "TC", "N", "PL", "ASYNC", "LOG", "G", "T20"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "PL", "E501"]
+"training/**" = ["ANN", "PLR2004", "PLR0913", "PLR0917", "T201", "TC001", "TC002", "TC003"]
+"scripts/**" = ["T201", "ANN"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q --cov=court --cov-branch --cov-report=term-missing --cov-fail-under=90"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+filterwarnings = [
+    "ignore:Setting the shape on a NumPy array has been deprecated:DeprecationWarning:joblib.numpy_pickle",
+]
