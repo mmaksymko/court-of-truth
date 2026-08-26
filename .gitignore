@@ -13,4 +13,3 @@ htmlcov/
 artifacts/**
 !artifacts/.gitkeep
 .idea/
-AGENTS.md
