@@ -22,6 +22,7 @@ dependencies = [
 [dependency-groups]
 dev = ["httpx2", "mypy", "pytest", "pytest-asyncio", "pytest-cov", "ruff"]
 training = ["pandas>=2.2"]
+ui = ["streamlit>=1.62", "watchdog>=6"]
 
 [build-system]
 requires = ["hatchling"]
