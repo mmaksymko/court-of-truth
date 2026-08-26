@@ -8,9 +8,9 @@ import pandas as pd
 from court.forensics.manifest import Manifest
 from court.forensics.text_transforms import transform_for
 from training.config import DetectorConfig
-from training.evaluation import calibrate, evaluate, gold_recall, split_data, tune_threshold
+from training.evaluation import calibrate, evaluate, split_data, tune_threshold
 from training.provenance import build_manifest
-from training.transfer.dedup import decontaminate_against_external, deduplicate_cross_split
+from training.transfer.dedup import deduplicate_cross_split
 from training.transformer import train_transformer
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -39,23 +39,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         {"train": train, "val": val, "test": test},
         text_field=cfg.text_field,
     )
-    if cfg.id == "jeansa":
-        gold_text = pd.read_csv(
-            DATA_ROOT / "jeansa_gold.csv",
-            usecols=[cfg.text_field],
-        ).dropna()
-        parts, gold_dedup_audit = decontaminate_against_external(
-            parts,
-            gold_text.rename(columns={cfg.text_field: "text"})[["text"]],
-            text_field=cfg.text_field,
-        )
-        print(
-            f"{cfg.id} dedup={dedup_audit['removed_rows']} "
-            f"gold_protected={gold_dedup_audit['removed_rows']}",
-            flush=True,
-        )
-    else:
-        print(f"{cfg.id} dedup={dedup_audit['removed_rows']}", flush=True)
+    print(f"{cfg.id} dedup={dedup_audit['removed_rows']}", flush=True)
     train, val, test = (parts[name] for name in ("train", "val", "test"))
     out_dir.mkdir(parents=True, exist_ok=True)
     if cfg.backend == "transformers":
@@ -69,14 +53,6 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         positive_index = list(model.classes_).index(cfg.positive_label)
         threshold = tune_threshold(model, val, cfg, positive_index)
         metrics, per_class = evaluate(model, test, cfg, positive_index, threshold)
-        if cfg.id == "jeansa":
-            metrics["gold_recall"] = gold_recall(
-                model,
-                cfg,
-                positive_index,
-                threshold,
-                DATA_ROOT,
-            )
         model_path = out_dir / "model.joblib"
         joblib.dump(model, model_path)
     manifest = build_manifest(

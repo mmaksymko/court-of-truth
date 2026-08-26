@@ -208,7 +208,7 @@ def _plateau_threshold(
         [f1_score(truth, scores >= threshold, average="macro") for threshold in candidates]
     )
     eligible = np.flatnonzero(metrics >= metrics.max() - tolerance)
-    selected = int(eligible[-1])
+    selected = int(eligible[np.argmin(np.abs(candidates[eligible]))])
     return float(candidates[selected]), float(metrics[selected])
 
 

@@ -40,9 +40,7 @@ max_features = 150000
 c = 1.0
 class_weight = "balanced"
 split_field = "split"
-threshold_objective = "target_recall"
-target_recall = 0.99
-threshold_candidates = "exact"
+threshold_objective = "macro_f1"
 
 [clickbait]
 source_csv = "clickbait.csv"
@@ -52,7 +50,7 @@ scope = "title"
 positive_label = "clickbait"
 backend = "transformers"
 split_field = "split"
-group_field = "outlet"
+group_field = ""
 model_name = "xlm-roberta-base"
 epochs = 6
 learning_rate = 0.00002

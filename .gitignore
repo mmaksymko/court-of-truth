@@ -13,3 +13,4 @@ htmlcov/
 artifacts/**
 !artifacts/.gitkeep
 .idea/
+.artifact_backups/

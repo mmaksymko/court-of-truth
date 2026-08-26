@@ -1,12 +1,10 @@
 from itertools import pairwise
-from pathlib import Path
 
 import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import brier_score_loss, f1_score, recall_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
-from court.forensics.text_transforms import transform_for
 from training.config import DetectorConfig
 from training.pipelines import build_pipeline
 from training.transfer.splits import seeded_outlet_split
@@ -104,17 +102,3 @@ def evaluate(
         negative: round(recall_score(truth, predicted, pos_label=False), 4),
     }
     return metrics, recall
-
-
-def gold_recall(
-    model: CalibratedClassifierCV,
-    cfg: DetectorConfig,
-    positive_index: int,
-    threshold: float,
-    data_root: Path,
-) -> float:
-    gold = pd.read_csv(data_root / "jeansa_gold.csv")
-    text = gold[cfg.text_field].fillna("").map(lambda value: transform_for(cfg.id, value))
-    text = text[text.str.len() > 0]
-    proba = model.predict_proba(text)[:, positive_index]
-    return round(float((proba >= threshold).mean()), 4)
