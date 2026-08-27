@@ -1,3 +1,4 @@
+import sys
 from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
@@ -170,3 +171,35 @@ def test_transformer_backend_probability():
         1,
     )
     assert transformers_backend.predict_proba(bundle, "headline") == pytest.approx(0.8)
+
+
+def test_transformer_backend_loads_with_mistral_regex_fix(monkeypatch):
+    tokenizer_calls = []
+    model = SimpleNamespace(eval=lambda: None)
+
+    class FakeTokenizerFactory:
+        @staticmethod
+        def from_pretrained(model_dir, **kwargs):
+            tokenizer_calls.append((model_dir, kwargs))
+            return object()
+
+    class FakeModelFactory:
+        @staticmethod
+        def from_pretrained(model_dir, **kwargs):
+            assert model_dir == "model"
+            assert kwargs == {"local_files_only": True}
+            return model
+
+    fake_transformers = SimpleNamespace(
+        AutoModelForSequenceClassification=FakeModelFactory,
+        AutoTokenizer=FakeTokenizerFactory,
+    )
+    fake_torch = SimpleNamespace()
+    monkeypatch.setitem(sys.modules, "torch", fake_torch)
+    monkeypatch.setitem(sys.modules, "transformers", fake_transformers)
+
+    bundle = transformers_backend.load("model", max_length=64, positive_index=1)
+
+    assert tokenizer_calls == [("model", {"local_files_only": True, "fix_mistral_regex": True})]
+    assert bundle.model is model
+    assert bundle.torch is fake_torch

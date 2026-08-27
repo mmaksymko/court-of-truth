@@ -11,7 +11,7 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
-      - artifacts:/app/artifacts:ro
+      - ./artifacts:/app/artifacts:ro
     read_only: true
     tmpfs:
       - /tmp:size=512m,mode=1777
@@ -20,6 +20,43 @@ services:
     pids_limit: 256
     init: true
 
+  ui:
+    build:
+      context: .
+      target: app
+    command:
+      - streamlit
+      - run
+      - streamlit_app.py
+      - --server.address=0.0.0.0
+      - --server.headless=true
+    environment:
+      COURT_API_URL: http://app:8000
+      HOME: /tmp
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    ports:
+      - "127.0.0.1:8501:8501"
+    depends_on:
+      app:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 128
+    init: true
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health', timeout=3)
+      start_period: 20s
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
   train:
     build:
       context: .
@@ -27,7 +64,7 @@ services:
     profiles: ["train"]
     command: python -m training.train --out /app/artifacts
     volumes:
-      - artifacts:/app/artifacts
+      - ./artifacts:/app/artifacts
     read_only: true
     tmpfs:
       - /tmp:size=256m,mode=1777
@@ -35,6 +72,3 @@ services:
     security_opt: ["no-new-privileges:true"]
     pids_limit: 256
     init: true
-
-volumes:
-  artifacts:

@@ -13,9 +13,18 @@ Detectors: `ai_generated`, `clickbait`, `jeansa`, `mt_translation`.
 Python 3.13, `uv`, and trained artifacts under `artifacts/` are required:
 
 ```bash
-uv sync --group dev --group training
+uv sync --locked --group dev --group training --group ui
 uv run python -m court
 ```
+
+In a second terminal, start the product UI:
+
+```bash
+uv run --no-sync streamlit run streamlit_app.py
+```
+
+Open <http://127.0.0.1:8501>. The UI calls the local API at
+`http://127.0.0.1:8000` by default; override it with `COURT_API_URL` when needed.
 
 The key-free forensic endpoint:
 
@@ -32,8 +41,20 @@ the loaded registry.
 ## Docker
 
 ```bash
-docker compose up --build app
+docker compose up --build app ui
 ```
+
+The compose stack bind-mounts `./artifacts`, so it uses the same reviewed model
+artifacts as the local runtime. If that directory has not been provisioned yet,
+train the models into it first:
+
+```bash
+docker compose --profile train run --rm train
+docker compose up --build app ui
+```
+
+The API is available at <http://127.0.0.1:8000> and the UI at
+<http://127.0.0.1:8501>.
 
 ## Security boundary
 
@@ -48,4 +69,6 @@ and concurrent operations.
 bash scripts/check.sh
 ```
 
-Runs Ruff formatting/linting, mypy, branch coverage, and the full test suite.
+Reproduces the development, training, and UI dependency groups, then runs Ruff
+formatting/linting, mypy, a Streamlit availability check, branch coverage, and
+the full test suite.
