@@ -27,7 +27,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
     frame["_x"] = frame[cfg.text_field].map(lambda t: transform_for(cfg.id, t))
     frame = frame[frame["_x"].str.len() > 0]
 
-    labels = sorted(frame[cfg.label_field].unique())
+    labels = sorted(str(label) for label in frame[cfg.label_field].unique())
     if len(labels) != 2:
         raise ValueError(f"{cfg.id}: expected exactly 2 labels, got {labels}")
 
@@ -42,12 +42,17 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
     print(f"{cfg.id} dedup={dedup_audit['removed_rows']}", flush=True)
     train, val, test = (parts[name] for name in ("train", "val", "test"))
     out_dir.mkdir(parents=True, exist_ok=True)
+    extra_hyperparams: dict[str, object] | None
     if cfg.backend == "transformers":
         result = train_transformer(cfg, train, val, test, out_dir, SEED)
         threshold = result.threshold
         metrics = result.metrics
         per_class = result.per_class_recall
         model_path = out_dir / "model"
+        extra_hyperparams = {
+            "selected_epoch": result.selected_epoch,
+            "validation_macro_f1": result.val_f1,
+        }
     else:
         model = calibrate(cfg, train, SEED)
         positive_index = list(model.classes_).index(cfg.positive_label)
@@ -55,6 +60,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         metrics, per_class = evaluate(model, test, cfg, positive_index, threshold)
         model_path = out_dir / "model.joblib"
         joblib.dump(model, model_path)
+        extra_hyperparams = None
     manifest = build_manifest(
         cfg,
         labels,
@@ -66,14 +72,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         model_path,
         REPO_ROOT,
         SEED,
-        (
-            {
-                "selected_epoch": result.selected_epoch,
-                "validation_macro_f1": result.val_f1,
-            }
-            if cfg.backend == "transformers"
-            else None
-        ),
+        extra_hyperparams,
     )
     (out_dir / "manifest.json").write_text(manifest.model_dump_json(indent=2))
     return manifest

@@ -19,8 +19,9 @@ def get_registry(request: Request) -> Mapping[str, LoadedDetector]:
 
 
 def rate_subject(request: Request) -> str:
-    if request.client:
-        return request.client.host
+    client = request.client
+    if client:
+        return client.host
     return "unknown"
 
 

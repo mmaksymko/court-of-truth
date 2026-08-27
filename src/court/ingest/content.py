@@ -20,7 +20,7 @@ def extract(raw: bytes, content_type: str) -> tuple[str, str]:
     if og_title and og_title.get("content"):
         title = str(og_title["content"])
     elif soup.title and soup.title.string:
-        title = soup.title.string
+        title = str(soup.title.string)
 
     container = soup.find("article") or soup.find("main") or soup.body or soup
     paragraphs = [_normalize(node.get_text(" ", strip=True)) for node in container.find_all("p")]

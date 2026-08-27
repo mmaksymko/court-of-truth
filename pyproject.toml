@@ -20,7 +20,16 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["httpx2", "mypy", "pytest", "pytest-asyncio", "pytest-cov", "ruff"]
+dev = [
+    "httpx2",
+    "mypy",
+    "pandas-stubs>=3.0.5.260730",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "ruff",
+    "scipy-stubs>=1.18.1.0",
+]
 training = ["pandas>=2.2"]
 ui = ["streamlit>=1.62", "watchdog>=6"]
 

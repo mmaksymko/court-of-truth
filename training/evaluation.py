@@ -19,7 +19,7 @@ def split_data(
             group_field=cfg.group_field,
             seed=seed,
         )
-        parts = tuple(grouped[name] for name in ("train", "val", "test"))
+        parts = (grouped["train"], grouped["val"], grouped["test"])
     elif cfg.split_field and cfg.split_field in frame.columns:
         by = frame[cfg.split_field]
         actual = {str(value) for value in by.unique()}
@@ -42,11 +42,9 @@ def split_data(
 
 def calibrate(cfg: DetectorConfig, train: pd.DataFrame, seed: int) -> CalibratedClassifierCV:
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
-    return CalibratedClassifierCV(
-        build_pipeline(cfg, seed),
-        cv=cv,
-        ensemble=False,
-    ).fit(train["_x"], train[cfg.label_field])
+    model = CalibratedClassifierCV(build_pipeline(cfg, seed), cv=cv, ensemble=False)
+    model.fit(train["_x"], train[cfg.label_field])
+    return model
 
 
 def tune_threshold(
