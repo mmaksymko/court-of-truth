@@ -25,11 +25,6 @@ def main() -> None:
     parser.add_argument("--log", type=Path, default=DEFAULT_LOG)
     parser.add_argument("--no-log", action="store_true")
     parser.add_argument("--notes", default="")
-    parser.add_argument(
-        "--skip-ablations",
-        action="store_true",
-        help="skip extra historical/leakage models during broad searches",
-    )
     args = parser.parse_args()
 
     clickbait_config = _load_model_config(args.clickbait_config, ModelConfig())
@@ -53,6 +48,5 @@ def main() -> None:
         data_root=args.data_root,
         log_path=None if args.no_log else args.log,
         notes=args.notes,
-        include_ablations=not args.skip_ablations,
     )
     print(json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True))

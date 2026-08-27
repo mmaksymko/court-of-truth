@@ -3,12 +3,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pandas as pd
+from sklearn.dummy import DummyClassifier
 from training.transfer.config import DedupConfig, ThresholdPolicy
 from training.transfer.dedup import (
     decontaminate_against_external,
     deduplicate_cross_split,
 )
-from training.transfer.experiments import append_jsonl
+from training.transfer.experiments import append_jsonl, evaluate_jeansa
 from training.transfer.models import positive_scores
 from training.transfer.splits import seeded_outlet_split
 from training.transfer.thresholds import choose_threshold
@@ -129,6 +130,31 @@ def test_external_decontamination_accepts_only_text_and_preserves_external_rows(
     assert audit["gold_used_for_dedup_only"] is True
     assert audit["gold_columns_read_before_fit"] == ["text"]
     assert audit["removed_rows"] == {"train": 1, "val": 1, "test": 1}
+
+
+def test_jeansa_evaluation_uses_merged_internal_splits_without_gold_file():
+    frame = pd.DataFrame(
+        [
+            {
+                "text": f"{split} {label} unique article {index}",
+                "label": label,
+                "split": split,
+            }
+            for split in ("train", "val", "test")
+            for index, label in enumerate(("editorial", "sponsored"))
+        ]
+    )
+
+    result = evaluate_jeansa(
+        frame,
+        estimator_factory=lambda _: DummyClassifier(strategy="prior"),
+        model_config={"model": "dummy"},
+        threshold_policy=ThresholdPolicy(candidates="exact"),
+    )
+
+    assert result["protocol"] == "predefined-internal"
+    assert result["split_rows"] == {"train": 2, "val": 2, "test": 2}
+    assert "gold_recall" not in result
 
 
 def test_positive_scores_orients_binary_decision_function_to_named_positive():
