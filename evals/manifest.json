@@ -1,0 +1,25 @@
+{
+  "n_cases": 56,
+  "verdict_counts": {
+    "questionable": 23,
+    "reliable": 24,
+    "unreliable": 9
+  },
+  "signal_counts": {
+    "ai": 8,
+    "clickbait": 9,
+    "jeansa": 12,
+    "mt": 19,
+    "none": 8
+  },
+  "search_required": 39,
+  "leakage_caveat_items": 32,
+  "cases_sha256": "d524713c8720bf38a0e77717410019ee1bd529f7adeb1915414dedab20495eeb",
+  "dataset_csv_sha256": {
+    "jeansa": "e592dc407418ec95eb0c674e406242e0c213b6335201e12d4e365b2a939918bc",
+    "clickbait": "49ab0422a3904aeed05d700ae60c9d7d244d2121a95b3cb05de8f30662775ea1",
+    "ai_generated": "454c98bd63a8fa63be91779e024793b46d4ce952eba61e1e97fcc57340ef12c9",
+    "mt_translation": "926fd07d3035c777fcd9594756804d33d8aa425bf160b7e3fdde750d50dfaaf5"
+  },
+  "annotation_status": "single-curator; second independent annotation + arbitration pending"
+}

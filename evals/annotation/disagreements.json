@@ -1,0 +1,121 @@
+[
+  {
+    "id": "TC05",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "Project and focus verified, but the headline outcome figure is self-reported and not independently confirmable.",
+    "annotator2_rationale": "Project, implementer, EU funding, subgrant competitions and the 630,102.85 EUR total are confirmed by the project's official site; granular local budget figures are plausible but individually unverified."
+  },
+  {
+    "id": "TC14",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "Misleadingly-framed pension-scare headline; distorts routine policy nuance, no concrete verified cut.",
+    "annotator2_rationale": "The underlying claim is confirmed by independent outlets and officials (Budget Committee chair R. Pidlasa, Pension Fund): the 2361 UAH Chornobyl supplement is restricted to those who actually lived in the resettlement zone in 1986-1993, so a specific pensioner category does lose payments; headline generalizes but the key facts check out."
+  },
+  {
+    "id": "TC18",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "Reports a real geomagnetic index but couples it to unsupported human-impact framing.",
+    "annotator2_rationale": "NOAA did issue a G1 geomagnetic storm watch for 25 Dec 2024 and the article's day-by-day weakening forecast is consistent with it; minor flaws remain (K-index actually spans 0-9, not 2-9, and the health-effects framing for 'meteo-dependent' people is scientifically weak but hedged)."
+  },
+  {
+    "id": "TC20",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "Underlying projection is real, but obesity is reframed as a communicable \"new epidemic\"; misleading framing.",
+    "annotator2_rationale": "All headline figures (60%/31%, 3.8 bn/746 mn, country-level projections, Gates Foundation funding) match the March 2025 Lancet GBD study and IHME press release; the alarmist 'epidemic' framing does not distort the underlying facts."
+  },
+  {
+    "id": "TC21",
+    "gold": "unreliable",
+    "annotator2": "reliable",
+    "gold_rationale": "Central claim that the storm \"worsens wellbeing for many\" is a refuted health pseudoscience premise.",
+    "annotator2_rationale": "NOAA SWPC confirms G2 (Kp6) geomagnetic storms for 21-22 March 2025, matching the article's core claim and dates; the lifestyle advice for 'reducing storm impact' is scientifically weak filler but hedged, and the storm facts are accurate."
+  },
+  {
+    "id": "TC22",
+    "gold": "unreliable",
+    "annotator2": "questionable",
+    "gold_rationale": "Systematically misleading health-fear pseudoscience built on a refuted premise.",
+    "annotator2_rationale": "The K-index forecast figures match what RBC-Ukraine and other Ukrainian outlets published for mid-December 2024, but the forecast itself is weakly sourced and the sweeping health-effect claims (migraines, mood swings, 'red level' danger from Kp5-6) are scientifically unsupported and fear-framed."
+  },
+  {
+    "id": "TC23",
+    "gold": "reliable",
+    "annotator2": "questionable",
+    "gold_rationale": "Historical claim accurate in all key particulars; appended whataboutism aside, core fact stands.",
+    "annotator2_rationale": "The central 2001 shootdown facts (flight, date, casualties, S-200, no formal admission of legal guilt) are verified, but the piece adds unverified or contested claims stated as fact (alcohol abuse during the exercises, the Il-76 and F-16 incidents as established Ukrainian fault) and hostile editorial framing."
+  },
+  {
+    "id": "TC27",
+    "gold": "questionable",
+    "annotator2": "unreliable",
+    "gold_rationale": "Core event is TRUE, but wrapped in \"external management / signal from Washington\" propaganda framing; fact-checking is what separates the real anchor from the spin.",
+    "annotator2_rationale": "The procedural facts (suspicion notice, searches, Tymoshenko's denial) are confirmed by independent Ukrainian outlets, but the article's central thesis - that the case is a 'signal from Washington' and NABU a supranational US control instrument running a purge under 'external management' - is a fabricated conspiratorial narrative presented as fact, making the piece systematically misleading."
+  },
+  {
+    "id": "TC28",
+    "gold": "questionable",
+    "annotator2": "unreliable",
+    "gold_rationale": "Medvedev opinion diatribe against the Council of Europe; propaganda invective, no discrete checkable claim beyond framing.",
+    "annotator2_rationale": "Judged from the text alone: it is an uncontextualized relay of an official's invective whose framing (Ukraine as 'neo-Nazis', the CoE claims mechanism as an illegitimate 'anti-Russian quasi-judicial organ', inevitable Russian victory) is systematically misleading propaganda rather than verifiable reporting."
+  },
+  {
+    "id": "TC40",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "DIU chief's year-ahead predictions; unfalsifiable forecasts, not verifiable fact.",
+    "annotator2_rationale": "The article accurately reports clearly attributed public statements and forecasts by a named official on the national telethon; the key factual claim is that he said these things, and the framing is faithful quotation without distortion (the forecasts themselves are marked as his opinion)."
+  },
+  {
+    "id": "TC46",
+    "gold": "questionable",
+    "annotator2": "unreliable",
+    "gold_rationale": "Unverifiable anonymous French-financier anecdote; no factual anchor to check.",
+    "annotator2_rationale": "Opinion-propaganda piece built on unverifiable private anecdotes and a materially false figure (the inflated ~100,000 Dresden death toll, a known propaganda number vs. ~25,000 established by historians), with systematically misleading 'everyone betrays Russia' framing."
+  },
+  {
+    "id": "TC47",
+    "gold": "questionable",
+    "annotator2": "unreliable",
+    "gold_rationale": "Pure anti-Macron invective; xenophobic, no concrete verifiable claim.",
+    "annotator2_rationale": "Propaganda rant that presents fabricated intent (a captured combatant depicted as a civilian-hunting 'Nazi') with no evidence, dismisses his POW status under the Geneva Conventions, and adds derogatory unfactual asides about Macron and Paris; systematically misleading framing."
+  },
+  {
+    "id": "TC50",
+    "gold": "unreliable",
+    "annotator2": "questionable",
+    "gold_rationale": "Uncorroborated Russian milblogger atrocity claim; no credible source supports it.",
+    "annotator2_rationale": "The underlying abuse facts (500+ orphans, forced fundraising videos, two pregnancies, deprivations) are confirmed by the Slidstvo.Info investigation and the ombudsman, but the article materially distorts attribution: the evacuation was a private Shostak Foundation project, not a 'Kyiv program', and the anti-Zelensky framing is propaganda spin on a real story."
+  },
+  {
+    "id": "TC52",
+    "gold": "reliable",
+    "annotator2": "questionable",
+    "gold_rationale": "Benign auto how-to; accurate generic advice, no misleading claim.",
+    "annotator2_rationale": "Only a headline is provided with no factual content to assess; key claims are absent/unverifiable, so per guideline insufficient information defaults to questionable."
+  },
+  {
+    "id": "TC53",
+    "gold": "reliable",
+    "annotator2": "questionable",
+    "gold_rationale": "Benign lifestyle how-to; no misleading claim.",
+    "annotator2_rationale": "Only a headline is provided with no verifiable claims or supporting content; insufficient information, so questionable by default."
+  },
+  {
+    "id": "TC54",
+    "gold": "reliable",
+    "annotator2": "questionable",
+    "gold_rationale": "The specific checkable claim is accurate (pro-Russian commentary spin aside).",
+    "annotator2_rationale": "A March 2024 Bundestag research service report with roughly this conclusion was indeed reported, but the same report said a strike on NATO territory (e.g. France itself) WOULD be an Article 5 case; Tsarov's extrapolation that even strikes on NATO bases in Poland/Romania would go unanswered misrepresents the sources and pushes an unverified 'NATO will do nothing' narrative."
+  },
+  {
+    "id": "TC56",
+    "gold": "questionable",
+    "annotator2": "reliable",
+    "gold_rationale": "Venue/project/concept confirmed (exact 16 Jan 2025 date not pinned); text is a pro-war manifesto.",
+    "annotator2_rationale": "The core factual claim is confirmed: the digital-art war exhibition with this exact title by the 'Russkiy Stil' project did open at the Gallery on Trubnaya (Moscow exhibition halls) in January 2025 per the gallery's own page and Rossiyskaya Gazeta; the rest is the curators' essayistic opinion, which does not contradict verifiable facts."
+  }
+]

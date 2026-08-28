@@ -1,0 +1,46 @@
+{
+  "n_cases": 56,
+  "integrity_and_dedup": {
+    "empty_text_items": [],
+    "duplicate_groups": [],
+    "passed": true
+  },
+  "test_split": {
+    "violations": [],
+    "passed": true
+  },
+  "leakage": {
+    "note": "train membership is pre-dedup (upper bound); split reproduced with seed 42",
+    "by_dataset": {
+      "ai_generated": {
+        "tail_items": 12,
+        "in_train": 7,
+        "in_val": 2,
+        "in_test": 3,
+        "dropped_in_cleaning": 0
+      },
+      "mt_translation": {
+        "tail_items": 20,
+        "in_train": 13,
+        "in_val": 5,
+        "in_test": 2,
+        "dropped_in_cleaning": 0
+      }
+    },
+    "tail_items_total": 32,
+    "leaked_into_train_total": 20
+  },
+  "shortcut_classifier": {
+    "all56": {
+      "captured": 29,
+      "total": 56,
+      "accuracy": 0.518
+    },
+    "primary40": {
+      "captured": 21,
+      "total": 40,
+      "accuracy": 0.525
+    },
+    "chance_3class": 0.333
+  }
+}
