@@ -25,6 +25,11 @@ def test_all_four_modes_are_registered():
     assert set(MODES) == {"F", "B1", "B2", "B3"}
 
 
+def test_b3_mode_has_no_search():
+    assert MODES["B3"].search_context is None
+    assert MODES["F"].search_context == "medium"
+
+
 def test_run_item_full_mode_completes():
     record = asyncio.run(run_item(_item("a"), FULL, report(), FakeLLM()))
     assert record.status == "ok"

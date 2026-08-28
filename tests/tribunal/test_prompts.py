@@ -133,6 +133,15 @@ def test_b2_judge_prompt_forces_empty_cited_detectors():
     assert "cited_detectors має бути []" in without
 
 
+def test_b3_party_prompt_replaces_search_with_no_search_block():
+    with_search = instructions.party_instructions("prosecutor", include_search=True)
+    without = instructions.party_instructions("prosecutor", include_search=False)
+    assert "Протокол пошуку доказів" in with_search
+    assert "Протокол пошуку доказів" not in without
+    assert "Без зовнішнього пошуку" in without
+    assert "sources завжди порожнє" in without
+
+
 def test_judge_flags_propaganda_source_as_unreliable():
     judge = instructions.judge_instructions()
     assert "Достовірність джерела" in judge

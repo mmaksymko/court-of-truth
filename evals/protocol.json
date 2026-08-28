@@ -13,7 +13,7 @@
     "F": "medium",
     "B1": "medium",
     "B2": "medium",
-    "B3": "low"
+    "B3": "none"
   },
   "corpus_path": "evals/cases.jsonl",
   "corpus_sha256": "d524713c8720bf38a0e77717410019ee1bd529f7adeb1915414dedab20495eeb",
@@ -25,5 +25,5 @@
     "jeansa": 0.6,
     "mt_translation": 0.5
   },
-  "notes": "code_commit is the git tag g4-code-freeze; gold sha256=9cca982f25c42c6db42336c358b0a4f97a48e62d0238455c646bcaf545d80358; search transcript captured at pilot; model id to confirm at pilot."
+  "notes": "B3 = no web search (search_context none); code_commit is git tag g4-code-freeze; gold sha256=9cca982f25c42c6db42336c358b0a4f97a48e62d0238455c646bcaf545d80358; transcript captured at pilot; model id to confirm at pilot."
 }

@@ -26,7 +26,7 @@ class LLMClient(Protocol):
 def build_llm(
     settings: Settings,
     *,
-    search_context: SearchContext = "low",
+    search_context: SearchContext | None = "low",
     include_forensics: bool = True,
     adversarial: bool = True,
 ) -> LLMClient | None:
@@ -45,7 +45,7 @@ class OpenAIAgentsClient:
         self,
         settings: Settings,
         *,
-        search_context: SearchContext = "low",
+        search_context: SearchContext | None = "low",
         include_forensics: bool = True,
         adversarial: bool = True,
     ) -> None:

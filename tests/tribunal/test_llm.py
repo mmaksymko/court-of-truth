@@ -30,6 +30,19 @@ async def test_argument_uses_private_bounded_search_run(monkeypatch):
     assert captured["config"].tracing_disabled
 
 
+def test_b3_party_has_no_web_search_tool():
+    from court.tribunal.llm import OpenAIAgentsClient
+    from tests.fakes import make_settings
+
+    client = OpenAIAgentsClient(
+        make_settings(openai_api_key="sk-test-not-real"), search_context=None
+    )
+    prosecutor = client._agents.prosecutor
+    assert prosecutor.tools == []
+    assert prosecutor.model_settings.tool_choice != "required"
+    assert "Без зовнішнього пошуку" in prosecutor.instructions
+
+
 @pytest.mark.asyncio
 async def test_telemetry_captures_usage_and_search_trace(monkeypatch):
     async def fake_run(starting_agent, user, *, max_turns, run_config):

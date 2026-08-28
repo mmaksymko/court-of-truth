@@ -19,19 +19,26 @@ class AgentBundle(NamedTuple):
 def build_agents(
     model: "Model",
     *,
-    search_context: "SearchContext" = "low",
+    search_context: "SearchContext | None" = "low",
     include_forensics: bool = True,
     adversarial: bool = True,
 ) -> AgentBundle:
     from agents import Agent, ModelSettings, WebSearchTool  # noqa: PLC0415
     from openai.types.shared import Reasoning  # noqa: PLC0415
 
-    research_settings = ModelSettings(
-        store=False,
-        tool_choice="required",
-        reasoning=Reasoning(effort="medium"),
-        response_include=["web_search_call.action.sources"],
-    )
+    search = search_context is not None
+    if search_context is not None:
+        research_settings = ModelSettings(
+            store=False,
+            tool_choice="required",
+            reasoning=Reasoning(effort="medium"),
+            response_include=["web_search_call.action.sources"],
+        )
+        tools: list[Any] = [WebSearchTool(search_context_size=search_context)]
+    else:
+        # B3: no external search - the sides argue from the article and detectors only.
+        research_settings = ModelSettings(store=False, reasoning=Reasoning(effort="medium"))
+        tools = []
 
     def researcher(name: str, instructions: str) -> Any:  # noqa: ANN401
         return Agent(
@@ -40,11 +47,14 @@ def build_agents(
             model=model,
             model_settings=research_settings,
             output_type=Argument,
-            tools=[WebSearchTool(search_context_size=search_context)],
+            tools=tools,
         )
 
     def party(name: str, role: Role) -> Any:  # noqa: ANN401
-        return researcher(name, party_instructions(role, include_forensics=include_forensics))
+        return researcher(
+            name,
+            party_instructions(role, include_forensics=include_forensics, include_search=search),
+        )
 
     return AgentBundle(
         prosecutor=party("Прокурор", "prosecutor"),
