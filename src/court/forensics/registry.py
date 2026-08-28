@@ -67,7 +67,6 @@ def _build(manifest: Manifest, artifact_dir: Path) -> LoadedDetector:
 
 def _evidence(manifest: Manifest, predict: Callable[[str], float]) -> Callable[[str], list[str]]:
     if manifest.detector_id == "jeansa":
-        # Promotional exhibits read better than an occlusion word-list for jeansa.
         return partial(promo_signals.promo_evidence, k=_EVIDENCE_TOP_K)
     return partial(occlusion.occlusion_evidence, predict, k=_EVIDENCE_TOP_K)
 

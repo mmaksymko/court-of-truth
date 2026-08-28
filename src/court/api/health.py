@@ -21,12 +21,17 @@ async def live() -> LiveResponse:
 async def health(request: Request) -> HealthResponse:
     registry = getattr(request.app.state, "registry", None)
     detector_ready = registry is not None
+    llm_ready = getattr(request.app.state, "llm", None) is not None
     return HealthResponse(
         status="ok" if detector_ready else "degraded",
         components={
             "forensics": ComponentState(
                 ready=detector_ready,
                 detail="loaded" if detector_ready else "registry unavailable",
+            ),
+            "tribunal": ComponentState(
+                ready=llm_ready,
+                detail="configured" if llm_ready else "OpenAI API key not configured",
             ),
         },
         detectors={

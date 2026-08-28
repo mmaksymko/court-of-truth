@@ -7,7 +7,7 @@ def test_health_reports_components(client: TestClient):
     body = client.get("/v1/health").json()
     assert body["status"] == "ok"
     assert body["components"]["forensics"]["ready"]
-    assert "tribunal" not in body["components"]
+    assert body["components"]["tribunal"]["ready"] is False
     assert set(body["detectors"]) == {"jeansa", "clickbait"}
 
 

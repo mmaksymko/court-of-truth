@@ -12,14 +12,6 @@ def ensure_registry(
     expected_detectors: Collection[str],
     enabled_detectors: Collection[str] = (),
 ) -> Mapping[str, LoadedDetector]:
-    return _validated_registry(artifacts_dir, expected_detectors, enabled_detectors)
-
-
-def _validated_registry(
-    artifacts_dir: Path,
-    expected_detectors: Collection[str],
-    enabled_detectors: Collection[str] = (),
-) -> Mapping[str, LoadedDetector]:
     registry = load_registry(artifacts_dir, ())
     actual = set(registry)
     expected = set(expected_detectors)

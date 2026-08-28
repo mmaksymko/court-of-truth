@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, Request
 
 from court.config import Settings
 from court.forensics.registry import LoadedDetector
+from court.tribunal.llm import LLMClient
 
 
 def get_settings(request: Request) -> Settings:
@@ -18,6 +19,13 @@ def get_registry(request: Request) -> Mapping[str, LoadedDetector]:
     return cast("Mapping[str, LoadedDetector]", registry)
 
 
+def get_llm(request: Request) -> LLMClient:
+    llm = getattr(request.app.state, "llm", None)
+    if llm is None:
+        raise HTTPException(503, "OpenAI API key is not configured")
+    return cast("LLMClient", llm)
+
+
 def rate_subject(request: Request) -> str:
     client = request.client
     if client:
@@ -27,3 +35,4 @@ def rate_subject(request: Request) -> str:
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 RegistryDep = Annotated[Mapping[str, LoadedDetector], Depends(get_registry)]
+LLMDep = Annotated[LLMClient, Depends(get_llm)]

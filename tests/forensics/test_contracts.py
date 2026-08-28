@@ -4,7 +4,7 @@ from pydantic import TypeAdapter, ValidationError
 from court.forensics.manifest import Manifest
 from court.forensics.schemas import AnalyzeRequest, DetectorResult, OkResult, SkippedResult
 
-_adapter = TypeAdapter(DetectorResult)
+_adapter: TypeAdapter[DetectorResult] = TypeAdapter(DetectorResult)
 
 
 def test_discriminator_parses_ok():

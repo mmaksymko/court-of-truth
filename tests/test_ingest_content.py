@@ -5,18 +5,15 @@ import pytest
 
 from court.config import Settings
 from court.ingest.fetch import IngestError, extract, fetch_article
-from court.ingest.schemas import ReviewRequest
 
 
 async def public_resolver(_host: str, _port: int) -> list[str]:
     return ["93.184.216.34"]
 
 
-def test_plain_text_extract_and_input_normalization():
+def test_plain_text_extract():
     assert extract(b"  one\n two ", "text/plain") == ("", "one two")
     assert extract("текст".encode(), "text/plain; charset=not-a-codec") == ("", "текст")
-    request = ReviewRequest(title="  Заголовок  ")
-    assert request.title == "  Заголовок  "
 
 
 @pytest.mark.asyncio

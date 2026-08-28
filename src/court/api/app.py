@@ -15,8 +15,10 @@ from court.api.routes import router
 from court.config import Settings, get_settings
 from court.forensics.models import EXPECTED_DETECTORS, ensure_registry
 from court.forensics.registry import LoadedDetector
+from court.tribunal.llm import LLMClient, build_llm
 
 RegistryLoader = Callable[[Settings], Mapping[str, LoadedDetector]]
+LLMBuilder = Callable[[Settings], LLMClient | None]
 
 
 def _registry(settings: Settings) -> Mapping[str, LoadedDetector]:
@@ -31,6 +33,7 @@ def create_app(
     settings: Settings | None = None,
     *,
     registry_loader: RegistryLoader = _registry,
+    llm_builder: LLMBuilder = build_llm,
     transport: httpx.AsyncBaseTransport | None = None,
 ) -> FastAPI:
     configured = settings or get_settings()
@@ -43,6 +46,7 @@ def create_app(
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.settings = configured
         app.state.registry = await asyncio.to_thread(registry_loader, configured)
+        app.state.llm = llm_builder(configured)
         app.state.detector_executor = ThreadPoolExecutor(
             max_workers=configured.detector_workers,
             thread_name_prefix="court-detector",
@@ -64,7 +68,11 @@ def create_app(
             try:
                 await app.state.http.aclose()
             finally:
-                app.state.detector_executor.shutdown(wait=True, cancel_futures=True)
+                try:
+                    if app.state.llm is not None:
+                        await app.state.llm.aclose()
+                finally:
+                    app.state.detector_executor.shutdown(wait=True, cancel_futures=True)
 
     app = FastAPI(title="Court Criminalist", version="0.2.0", lifespan=lifespan)
     app.add_middleware(BodyLimitMiddleware, max_bytes=configured.max_body_bytes)

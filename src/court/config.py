@@ -6,6 +6,7 @@ from pydantic import (
     AliasChoices,
     BeforeValidator,
     Field,
+    SecretStr,
     field_validator,
 )
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -29,6 +30,13 @@ class Settings(BaseSettings):
         extra="ignore",
         populate_by_name=True,
     )
+
+    openai_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias=AliasChoices("COURT_OPENAI_API_KEY", "OPENAI_API_KEY"),
+    )
+    model: str = "gpt-5.6-luna"
+    llm_max_turns: int = Field(default=8, gt=0, le=20)
 
     artifacts_dir: Path = Path("artifacts")
     enabled_detectors: CsvList = []

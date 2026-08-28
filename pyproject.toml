@@ -32,6 +32,7 @@ dev = [
 ]
 training = ["pandas>=2.2"]
 ui = ["streamlit>=1.62", "watchdog>=6"]
+tribunal = ["openai>=2.48", "openai-agents>=0.18"]
 
 [build-system]
 requires = ["hatchling"]
@@ -53,6 +54,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "tests/**" = ["ANN", "PL", "E501"]
 "training/**" = ["ANN", "PLR2004", "PLR0913", "PLR0917", "T201", "TC001", "TC002", "TC003"]
 "scripts/**" = ["T201", "ANN"]
+"evals/**" = ["ANN", "PLR2004", "PLR0913", "PLR0917", "T201", "TC001", "TC002", "TC003"]
 
 [tool.mypy]
 python_version = "3.12"

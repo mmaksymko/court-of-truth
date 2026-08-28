@@ -27,7 +27,6 @@ def run_detector(
     floor = _min_words(meta)
     caveats: list[str] = []
     if gate_words < floor:
-        # below the shortest text the detector was trained on: still report, but flag it
         caveats.append(
             f"текст коротший за навчальний мінімум ({gate_words} < {floor} слів); "
             "вердикт поза розподілом навчання і менш надійний"
