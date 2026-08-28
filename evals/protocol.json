@@ -1,0 +1,29 @@
+{
+  "model": "gpt-5.6-luna",
+  "seed": 42,
+  "repeats": 3,
+  "include_swapped": true,
+  "modes": [
+    "F",
+    "B1",
+    "B2",
+    "B3"
+  ],
+  "search_context": {
+    "F": "medium",
+    "B1": "medium",
+    "B2": "medium",
+    "B3": "low"
+  },
+  "corpus_path": "evals/cases.jsonl",
+  "corpus_sha256": "d524713c8720bf38a0e77717410019ee1bd529f7adeb1915414dedab20495eeb",
+  "search_transcript_sha256": null,
+  "code_commit": "g4-code-freeze",
+  "thresholds": {
+    "ai_generated": 0.5,
+    "clickbait": 0.7148534923067267,
+    "jeansa": 0.6,
+    "mt_translation": 0.5
+  },
+  "notes": "code_commit is the git tag g4-code-freeze; gold sha256=9cca982f25c42c6db42336c358b0a4f97a48e62d0238455c646bcaf545d80358; search transcript captured at pilot; model id to confirm at pilot."
+}
