@@ -1,4 +1,4 @@
-"""Serialize the 56 curated tribunal cases into evals/cases.jsonl + a manifest.
+"""Serialize the 60 curated tribunal cases into evals/cases.jsonl + a manifest.
 
 Single source of truth is the two Markdown tables in docs/completion-plan/
 (13-curated-corpus.md for case metadata, 14-gold-labels.md for the gold verdict).
@@ -116,6 +116,7 @@ def build() -> None:
                 "text": text,
                 "source_url": _dash(record.get("source_url", "") or ""),
                 "dataset_label": record.get("label", ""),
+                "published": _dash(record.get("date_published_bucket", "") or ""),
                 "text_sha256": _sha256(_normalize(text)),
                 "provenance": {
                     "split": "tail" if dataset in TAIL_DATASETS else "test",
@@ -127,8 +128,8 @@ def build() -> None:
                     "key_external_fact": _dash(g[6]),
                     "evidence_url": _dash(g[7]),
                     "rationale": g[8],
-                    "annotator": "curator-1",
-                    "method": "single-curator web search (author); not yet double-annotated",
+                    "annotator": "author",
+                    "method": "single-curator human annotation (author); web-search verified",
                 },
             }
         )
@@ -139,23 +140,66 @@ def build() -> None:
         for case in cases:
             handle.write(json.dumps(case, ensure_ascii=False, sort_keys=True) + "\n")
 
-    verdicts = _counter(case["gold"]["verdict"] for case in cases)  # type: ignore[index]
+    legacy_verdicts = _counter(case["gold"]["verdict"] for case in cases)  # type: ignore[index]
     signals = _counter(str(case["signal"]) for case in cases)
+    human_verdicts, human_methods = _final_labels()
+    human_gold_path = OUT_DIR / "annotation" / "human_gold.jsonl"
     manifest = {
         "n_cases": len(cases),
-        "verdict_counts": verdicts,
+        # CANONICAL gold = annotation/human_gold.jsonl (latest adjudication, all 60 cases);
+        # the experiment scores against these human_gold_verdict_counts - cite these.
+        # legacy_verdict_counts are the earlier plan-table labels embedded in cases.jsonl,
+        # kept only for audit (they differ from the human gold and are NOT scored against).
+        "human_gold_verdict_counts": human_verdicts,
+        "human_gold_annotator_counts": human_methods,
+        "legacy_verdict_counts": legacy_verdicts,
         "signal_counts": signals,
         "search_required": sum(c["search_necessity"] == "search-required" for c in cases),
         "leakage_caveat_items": sum(c["provenance"]["leakage_caveat"] for c in cases),  # type: ignore[index]
         "cases_sha256": _file_sha256(cases_path),
+        "human_gold_sha256": _file_sha256(human_gold_path) if human_gold_path.exists() else None,
         "dataset_csv_sha256": {name: _file_sha256(path) for name, path in DATASET_CSV.items()},
-        "annotation_status": "single-curator; second independent annotation + arbitration pending",
+        "annotation_status": (
+            "independent curator revision gold-rebalance-20-20-20-2026-08-30 balances "
+            "all 60 cases at 20 reliable / 20 questionable / 20 unreliable, with six "
+            "current article replacements and written rationales (canonical labels in "
+            "annotation/human_gold.jsonl; "
+            "append-only provenance in human_gold_history.jsonl). cases.jsonl carries an "
+            "earlier plan-table label kept for audit only. No human inter-annotator "
+            "agreement is claimed."
+        ),
     }
     (OUT_DIR / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(f"wrote {cases_path} ({len(cases)} cases)")
     print(json.dumps(manifest, ensure_ascii=False, indent=2))
+
+
+def _final_labels() -> tuple[dict[str, int], dict[str, int]]:
+    """Read the canonical human gold labels and their annotator provenance.
+
+    The frozen gold is ``annotation/human_gold.jsonl``. The append-only
+    ``annotation/human_gold_history.jsonl`` carries each decision's annotator and
+    rationale; the latest record per id is the provenance of the canonical label.
+    """
+    path = OUT_DIR / "annotation" / "human_gold.jsonl"
+    if not path.exists():
+        return {}, {}
+    verdicts: dict[str, int] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            verdict = str(json.loads(line)["final_verdict"])
+            verdicts[verdict] = verdicts.get(verdict, 0) + 1
+    latest: dict[str, str] = {}
+    history = OUT_DIR / "annotation" / "human_gold_history.jsonl"
+    if history.exists():
+        for line in history.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                record = json.loads(line)
+                latest[str(record["id"])] = str(record.get("annotator", "unknown"))
+    methods = _counter(latest.values())
+    return dict(sorted(verdicts.items())), dict(sorted(methods.items()))
 
 
 def _counter(values: object) -> dict[str, int]:

@@ -9,10 +9,11 @@ a failed run to a label under the intention-to-treat rule before scoring, and us
 from __future__ import annotations
 
 from dataclasses import dataclass
+from random import Random
 from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
 Label = Literal["reliable", "questionable", "unreliable"]
 LABELS: tuple[Label, ...] = ("reliable", "questionable", "unreliable")
@@ -105,6 +106,79 @@ def calibration(
     return Calibration(
         top_label_ece=_ece(top_pairs, bins), per_class_ece=per_class, macro_ece=macro
     )
+
+
+def quantile_ece(
+    gold: Sequence[Label],
+    predicted: Sequence[Label],
+    probabilities: Sequence[dict[Label, float]],
+    *,
+    bins: int = 5,
+) -> float:
+    """Top-label ECE with equal-count (quantile) bins instead of equal width.
+
+    At n=56 fixed 10-width bins are uninterpretable: most are empty and a couple
+    hold 20-40 points, so the value is dominated by where a handful of points fall
+    against the bin edges. Equal-count bins keep each bucket populated. Report this
+    with a bootstrap CI, and prefer Brier (bin-free) as the primary calibration
+    metric; treat any ECE as illustrative only.
+    """
+    _check_length(gold, predicted, probabilities)
+    pairs = sorted(
+        (
+            (probabilities[i].get(predicted[i], 0.0), predicted[i] == gold[i])
+            for i in range(len(gold))
+        ),
+        key=lambda pair: pair[0],
+    )
+    total = len(pairs)
+    if total == 0:
+        return 0.0
+    error = 0.0
+    for index in range(bins):
+        bucket = pairs[index * total // bins : (index + 1) * total // bins]
+        if not bucket:
+            continue
+        avg_confidence = sum(confidence for confidence, _ in bucket) / len(bucket)
+        accuracy = sum(correct for _, correct in bucket) / len(bucket)
+        error += (len(bucket) / total) * abs(avg_confidence - accuracy)
+    return error
+
+
+@dataclass(frozen=True)
+class Interval:
+    point: float
+    low: float
+    high: float
+
+
+def bootstrap_ci(
+    items: Sequence[object],
+    statistic: Callable[[Sequence[object]], float],
+    *,
+    resamples: int = 2000,
+    alpha: float = 0.05,
+    seed: int = 42,
+) -> Interval:
+    """Percentile bootstrap CI for a paired statistic over items (deterministic).
+
+    ``items`` is any per-case sequence (e.g. ``list(zip(gold, predicted))``) and
+    ``statistic`` maps a resampled list to a scalar. Resamples case indices with
+    replacement, so it respects the paired structure of the 56 cases. Always report
+    corpus metrics as (point, CI) at N=56 - the CI is wide, and that is the honest
+    signal.
+    """
+    count = len(items)
+    if count == 0:
+        return Interval(0.0, 0.0, 0.0)
+    point = statistic(items)
+    rng = Random(seed)
+    estimates = sorted(
+        statistic([items[rng.randrange(count)] for _ in range(count)]) for _ in range(resamples)
+    )
+    low = estimates[max(0, int((alpha / 2) * resamples))]
+    high = estimates[min(resamples - 1, int((1 - alpha / 2) * resamples))]
+    return Interval(point=point, low=low, high=high)
 
 
 @dataclass(frozen=True)

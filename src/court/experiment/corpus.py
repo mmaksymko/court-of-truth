@@ -31,6 +31,7 @@ def load_items(cases_path: Path) -> list[ItemInput]:
                 title=case.get("title", ""),
                 text=case["text"],
                 source_url=case.get("source_url"),
+                published=case.get("published"),
             )
         )
     return items

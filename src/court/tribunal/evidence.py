@@ -12,7 +12,11 @@ def build_evidence(arguments: Sequence[Argument]) -> list[EvidenceRecord]:
     """
     records: list[EvidenceRecord] = []
     for argument in arguments:
-        prefix = argument.role[0]
+        # Prefix evidence ids with "e" (ep1, ea1, en1) so they live in a namespace
+        # distinct from claim ids (p1, a1, n1). Sharing one namespace let the Judge
+        # silently swap an evidence id for a claim id (both "p1"), a confusion the
+        # cross-reference checks could not catch.
+        prefix = f"e{argument.role[0]}"
         for index, source in enumerate(argument.sources, start=1):
             records.append(
                 EvidenceRecord(

@@ -52,3 +52,33 @@ def test_length_mismatch_raises():
 def test_outcome_counts_failure_rate():
     assert OutcomeCounts(total=4, completed=3, failures=1).failure_rate == 0.25
     assert OutcomeCounts(total=0, completed=0, failures=0).failure_rate == 0.0
+
+
+def test_quantile_ece_perfect_and_empty():
+    assert metrics.quantile_ece(["reliable"], ["reliable"], [_ONEHOT], bins=2) == 0.0
+    assert metrics.quantile_ece([], [], [], bins=5) == 0.0
+
+
+def test_quantile_ece_overconfident_wrong():
+    # One confident-but-wrong prediction: confidence 1.0, accuracy 0 -> ECE 1.0.
+    assert metrics.quantile_ece(["unreliable"], ["reliable"], [_ONEHOT], bins=1) == pytest.approx(
+        1.0
+    )
+
+
+def test_bootstrap_ci_is_deterministic_and_brackets_point():
+    items = [1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0]
+
+    def mean(sample):
+        return sum(sample) / len(sample)
+
+    first = metrics.bootstrap_ci(items, mean, resamples=500, seed=42)
+    second = metrics.bootstrap_ci(items, mean, resamples=500, seed=42)
+    assert (first.point, first.low, first.high) == (second.point, second.low, second.high)
+    assert first.point == pytest.approx(0.625)
+    assert first.low <= first.point <= first.high
+
+
+def test_bootstrap_ci_empty():
+    result = metrics.bootstrap_ci([], lambda sample: 0.0)
+    assert (result.point, result.low, result.high) == (0.0, 0.0, 0.0)

@@ -4,7 +4,6 @@ import pytest
 from pydantic import ValidationError
 
 from court.tribunal.deliberation import deliberate
-from court.tribunal.errors import TribunalError
 from court.tribunal.evidence import build_evidence
 from court.tribunal.schemas import Objection, Verdict, VerdictProbabilities
 from tests.fakes import FakeLLM
@@ -61,35 +60,36 @@ def test_build_evidence_assigns_stable_ids_and_sides():
 
     prosecution, defence = asyncio.run(arguments())
     evidence = build_evidence([prosecution, defence])
-    assert [record.id for record in evidence] == ["p1", "a1"]
+    # Evidence ids live in their own namespace ("ep"/"ea"), distinct from claim ids.
+    assert [record.id for record in evidence] == ["ep1", "ea1"]
     assert [record.side for record in evidence] == ["prosecutor", "advocate"]
 
 
-def test_verdict_citing_unknown_evidence_is_rejected():
+def test_verdict_citing_unknown_evidence_is_trimmed():
     class GhostEvidenceJudge(FakeLLM):
         async def judge(self, _user: str) -> Verdict:
             return Verdict(**_verdict(used_evidence_ids=["ghost"]))
 
-    with pytest.raises(TribunalError, match="evidence absent"):
-        asyncio.run(deliberate("Назва", "Текст", report(), GhostEvidenceJudge()))
+    result = asyncio.run(deliberate("Назва", "Текст", report(), GhostEvidenceJudge()))
+    assert result.verdict.used_evidence_ids == []
 
 
-def test_verdict_citing_unknown_detector_is_rejected():
+def test_verdict_citing_unknown_detector_is_trimmed():
     class GhostDetectorJudge(FakeLLM):
         async def judge(self, _user: str) -> Verdict:
             return Verdict(**_verdict(cited_detectors=["nope"]))
 
-    with pytest.raises(TribunalError, match="detectors absent"):
-        asyncio.run(deliberate("Назва", "Текст", report(), GhostDetectorJudge()))
+    result = asyncio.run(deliberate("Назва", "Текст", report(), GhostDetectorJudge()))
+    assert result.verdict.cited_detectors == []
 
 
-def test_verdict_objecting_to_unknown_claim_is_rejected():
+def test_verdict_objecting_to_unknown_claim_is_trimmed():
     class GhostObjectionJudge(FakeLLM):
         async def judge(self, _user: str) -> Verdict:
             return Verdict(**_verdict(objections=[Objection(claim_id="zzz", reason="без підстав")]))
 
-    with pytest.raises(TribunalError, match="claim absent"):
-        asyncio.run(deliberate("Назва", "Текст", report(), GhostObjectionJudge()))
+    result = asyncio.run(deliberate("Назва", "Текст", report(), GhostObjectionJudge()))
+    assert result.verdict.objections == []
 
 
 def test_verdict_objecting_to_a_real_claim_passes():

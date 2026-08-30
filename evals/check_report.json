@@ -1,8 +1,10 @@
 {
-  "n_cases": 56,
+  "n_cases": 60,
   "integrity_and_dedup": {
     "empty_text_items": [],
+    "csv_text_drift_items": [],
     "duplicate_groups": [],
+    "near_duplicate_pairs": [],
     "passed": true
   },
   "test_split": {
@@ -13,33 +15,96 @@
     "note": "train membership is pre-dedup (upper bound); split reproduced with seed 42",
     "by_dataset": {
       "ai_generated": {
-        "tail_items": 12,
+        "tail_items": 17,
         "in_train": 7,
-        "in_val": 2,
-        "in_test": 3,
+        "in_val": 6,
+        "in_test": 4,
         "dropped_in_cleaning": 0
       },
       "mt_translation": {
-        "tail_items": 20,
-        "in_train": 13,
-        "in_val": 5,
-        "in_test": 2,
+        "tail_items": 35,
+        "in_train": 24,
+        "in_val": 6,
+        "in_test": 5,
         "dropped_in_cleaning": 0
       }
     },
-    "tail_items_total": 32,
-    "leaked_into_train_total": 20
+    "tail_items_total": 52,
+    "leaked_into_train_total": 31
   },
-  "shortcut_classifier": {
-    "all56": {
-      "captured": 29,
-      "total": 56,
-      "accuracy": 0.518
+  "shortcut_classifier_curator": {
+    "gold": "curator",
+    "all_cases": {
+      "signal": {
+        "captured": 45,
+        "total": 60,
+        "accuracy": 0.75
+      },
+      "domain": {
+        "captured": 44,
+        "total": 60,
+        "accuracy": 0.733
+      },
+      "signal+domain": {
+        "captured": 45,
+        "total": 60,
+        "accuracy": 0.75
+      }
     },
-    "primary40": {
-      "captured": 21,
-      "total": 40,
-      "accuracy": 0.525
+    "primary": {
+      "signal": {
+        "captured": 39,
+        "total": 52,
+        "accuracy": 0.75
+      },
+      "domain": {
+        "captured": 38,
+        "total": 52,
+        "accuracy": 0.731
+      },
+      "signal+domain": {
+        "captured": 39,
+        "total": 52,
+        "accuracy": 0.75
+      }
+    },
+    "chance_3class": 0.333
+  },
+  "shortcut_classifier_final": {
+    "gold": "final",
+    "all_cases": {
+      "signal": {
+        "captured": 45,
+        "total": 60,
+        "accuracy": 0.75
+      },
+      "domain": {
+        "captured": 44,
+        "total": 60,
+        "accuracy": 0.733
+      },
+      "signal+domain": {
+        "captured": 45,
+        "total": 60,
+        "accuracy": 0.75
+      }
+    },
+    "primary": {
+      "signal": {
+        "captured": 39,
+        "total": 52,
+        "accuracy": 0.75
+      },
+      "domain": {
+        "captured": 38,
+        "total": 52,
+        "accuracy": 0.731
+      },
+      "signal+domain": {
+        "captured": 39,
+        "total": 52,
+        "accuracy": 0.75
+      }
     },
     "chance_3class": 0.333
   }

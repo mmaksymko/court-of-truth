@@ -28,9 +28,14 @@ def build_agents(
 
     search = search_context is not None
     if search_context is not None:
+        # tool_choice="auto", not "required": forcing at least one web search on the
+        # ~17 article-sufficient cases (internal contradiction, clearly labelled ad,
+        # obvious satire) pushed the model to find and cite a merely tangential source,
+        # manufacturing false confirmation. The search stays available; the party uses
+        # it only when a claim actually needs external verification.
         research_settings = ModelSettings(
             store=False,
-            tool_choice="required",
+            tool_choice="auto",
             reasoning=Reasoning(effort="medium"),
             response_include=["web_search_call.action.sources"],
         )

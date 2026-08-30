@@ -20,6 +20,7 @@ import re
 import sys
 import tomllib
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from pathlib import Path
 
 import pandas as pd
@@ -42,9 +43,68 @@ def _normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
+def _sha256(text: str) -> str:
+    import hashlib  # noqa: PLC0415
+
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def _load_cases() -> list[dict]:
     lines = (EVALS / "cases.jsonl").read_text(encoding="utf-8").splitlines()
     return [json.loads(line) for line in lines if line.strip()]
+
+
+def _load_final_gold() -> dict[str, str]:
+    path = EVALS / "annotation" / "human_gold.jsonl"
+    if not path.exists():
+        return {}
+    gold: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            record = json.loads(line)
+            gold[record["id"]] = record["final_verdict"]
+    return gold
+
+
+def _csv_text(dataset: str, index: int) -> str | None:
+    """Re-read the article text from the source CSV by 0-based data-row position."""
+    source = DATA / f"{dataset}.csv"
+    if not source.exists():
+        return None
+    with source.open(encoding="utf-8") as handle:
+        for position, row in enumerate(csv.DictReader(handle)):
+            if position == index:
+                return (row.get("text") or "").strip()
+    return None
+
+
+def _domain(url: str | None) -> str:
+    if not url:
+        return "(no-url)"
+    from urllib.parse import urlsplit  # noqa: PLC0415
+
+    host = (urlsplit(url).hostname or "").lower()
+    return host[4:] if host.startswith("www.") else host or "(no-url)"
+
+
+def _tokens(text: str) -> set[str]:
+    return set(_normalize(text).split())
+
+
+def _near_duplicates(cases: list[dict], threshold: float = 0.3) -> list[dict]:
+    """Flag case pairs with high token-Jaccard overlap (exact-hash dedup misses these)."""
+    token_sets = {case["id"]: _tokens(case["text"]) for case in cases}
+    ids = [case["id"] for case in cases]
+    pairs: list[dict] = []
+    for i, left in enumerate(ids):
+        for right in ids[i + 1 :]:
+            a, b = token_sets[left], token_sets[right]
+            if not a or not b:
+                continue
+            jaccard = len(a & b) / len(a | b)
+            if jaccard >= threshold:
+                pairs.append({"pair": [left, right], "jaccard": round(jaccard, 3)})
+    return sorted(pairs, key=lambda item: item["jaccard"], reverse=True)
 
 
 def _configs() -> dict[str, DetectorConfig]:
@@ -66,15 +126,27 @@ def _clean_frame(cfg: DetectorConfig) -> pd.DataFrame:
 def _integrity_and_dedup(cases: list[dict]) -> dict:
     hashes: dict[str, list[str]] = defaultdict(list)
     empty: list[str] = []
+    drift: list[str] = []
     for case in cases:
         if not case["text"].strip():
             empty.append(case["id"])
         hashes[case["text_sha256"]].append(case["id"])
+        # Real integrity check: re-read the CSV row and confirm the frozen text still
+        # matches. The old check only compared already-stored hashes, so a reordered
+        # CSV row would silently swap the text under a TCxx id without failing.
+        csv_text = _csv_text(case["dataset"], case["row"])
+        if csv_text is None:
+            continue
+        if _sha256(_normalize(csv_text)) != case["text_sha256"]:
+            drift.append(case["id"])
     duplicates = {digest: ids for digest, ids in hashes.items() if len(ids) > 1}
+    near_dups = _near_duplicates(cases)
     return {
         "empty_text_items": empty,
+        "csv_text_drift_items": drift,
         "duplicate_groups": list(duplicates.values()),
-        "passed": not empty and not duplicates,
+        "near_duplicate_pairs": near_dups,
+        "passed": not empty and not duplicates and not drift,
     }
 
 
@@ -118,33 +190,53 @@ def _leakage(cases: list[dict]) -> dict:
     }
 
 
-def _shortcut(cases: list[dict]) -> dict:
-    def accuracy(subset: list[dict]) -> tuple[int, int, float]:
-        by_signal: dict[str, Counter] = defaultdict(Counter)
+def _shortcut(cases: list[dict], gold: dict[str, str] | None = None) -> dict:
+    """Most-frequent-verdict baselines for several shortcut features.
+
+    A low signal->verdict number alone is not evidence the corpus is non-trivial:
+    the strongest shortcut here is the source domain (domain->verdict beats the
+    detector signal), because the mt signal is perfectly collinear with one domain.
+    We therefore report domain and signal+domain baselines alongside the signal one,
+    against both the curator gold and the frozen final gold.
+    """
+
+    def label_of(case: dict) -> str:
+        if gold is not None and case["id"] in gold:
+            return gold[case["id"]]
+        return case["gold"]["verdict"]
+
+    def baseline(subset: list[dict], feature: Callable[[dict], str]) -> dict:
+        groups: dict[str, Counter] = defaultdict(Counter)
         for case in subset:
-            by_signal[case["signal"]][case["gold"]["verdict"]] += 1
-        captured = sum(counts.most_common(1)[0][1] for counts in by_signal.values())
+            groups[feature(case)][label_of(case)] += 1
+        captured = sum(counts.most_common(1)[0][1] for counts in groups.values())
         total = len(subset)
-        return captured, total, round(captured / total, 3) if total else 0.0
+        return {"captured": captured, "total": total, "accuracy": round(captured / total, 3)}
 
     primary = [case for case in cases if case["control_type"] == "primary"]
-    all_cap, all_total, all_acc = accuracy(cases)
-    pri_cap, pri_total, pri_acc = accuracy(primary)
+    features = {
+        "signal": lambda case: case["signal"],
+        "domain": lambda case: _domain(case.get("source_url")),
+        "signal+domain": lambda case: f"{case['signal']}|{_domain(case.get('source_url'))}",
+    }
     return {
-        "all56": {"captured": all_cap, "total": all_total, "accuracy": all_acc},
-        "primary40": {"captured": pri_cap, "total": pri_total, "accuracy": pri_acc},
+        "gold": "final" if gold else "curator",
+        "all_cases": {name: baseline(cases, fn) for name, fn in features.items()},
+        "primary": {name: baseline(primary, fn) for name, fn in features.items()},
         "chance_3class": 0.333,
     }
 
 
 def main() -> None:
     cases = _load_cases()
+    final_gold = _load_final_gold()
     report = {
         "n_cases": len(cases),
         "integrity_and_dedup": _integrity_and_dedup(cases),
         "test_split": _test_split(cases),
         "leakage": _leakage(cases),
-        "shortcut_classifier": _shortcut(cases),
+        "shortcut_classifier_curator": _shortcut(cases),
+        "shortcut_classifier_final": _shortcut(cases, final_gold) if final_gold else None,
     }
     (EVALS / "check_report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

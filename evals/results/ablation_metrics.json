@@ -1,0 +1,49 @@
+{
+  "n_cases": 60,
+  "gold_distribution": {
+    "reliable": 20,
+    "questionable": 20,
+    "unreliable": 20
+  },
+  "modes": {
+    "F": {
+      "n": 60,
+      "correct": 54,
+      "accuracy": 0.9,
+      "macro_f1": 0.9019,
+      "brier": 0.1955
+    },
+    "B1": {
+      "n": 60,
+      "correct": 51,
+      "accuracy": 0.85,
+      "macro_f1": 0.8517,
+      "brier": 0.2427
+    },
+    "B2": {
+      "n": 60,
+      "correct": 50,
+      "accuracy": 0.8333,
+      "macro_f1": 0.8332,
+      "brier": 0.2543
+    },
+    "B3": {
+      "n": 60,
+      "correct": 27,
+      "accuracy": 0.45,
+      "macro_f1": 0.3555,
+      "brier": 0.6558
+    }
+  },
+  "baselines": {
+    "most_frequent_class": 0.3333,
+    "signal_oracle": 0.75,
+    "domain_oracle": 0.7333,
+    "signal_domain_oracle": 0.75
+  },
+  "component_contribution_macro_f1": {
+    "web_search_F_minus_B3": 0.5464,
+    "forensics_F_minus_B2": 0.0687,
+    "adversarial_F_minus_B1": 0.0502
+  }
+}

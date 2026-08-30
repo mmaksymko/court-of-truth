@@ -23,7 +23,7 @@ from court.experiment.runner import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
     from pathlib import Path
 
     from court.experiment.metrics import Label
@@ -38,8 +38,15 @@ async def run_experiment(  # noqa: PLR0913
     llm_for: LLMFor,
     repeats: int = 1,
     include_swapped: bool = False,
+    on_record: Callable[[RunRecord], None] | None = None,
+    sequential_parties: bool = False,
+    party_delay_s: float = 0,
 ) -> list[RunRecord]:
-    """Run every item through every mode (with repeats/order-swap), one report per item."""
+    """Run every item through every mode (with repeats/order-swap), one report per item.
+
+    ``on_record`` (if given) is called with each run record the moment it completes,
+    so the caller can stream results to disk instead of losing a whole batch on crash.
+    """
     clients = {mode.name: llm_for(mode) for mode in modes}
     try:
         records: list[RunRecord] = []
@@ -54,6 +61,9 @@ async def run_experiment(  # noqa: PLR0913
                         clients[mode.name],
                         repeats=repeats,
                         include_swapped=include_swapped,
+                        on_record=on_record,
+                        sequential_parties=sequential_parties,
+                        party_delay_s=party_delay_s,
                     )
                 )
         return records

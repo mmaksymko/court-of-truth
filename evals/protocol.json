@@ -1,8 +1,8 @@
 {
   "model": "gpt-5.6-luna",
   "seed": 42,
-  "repeats": 3,
-  "include_swapped": true,
+  "repeats": 1,
+  "include_swapped": false,
   "modes": [
     "F",
     "B1",
@@ -16,7 +16,89 @@
     "B3": "none"
   },
   "corpus_path": "evals/cases.jsonl",
-  "corpus_sha256": "d524713c8720bf38a0e77717410019ee1bd529f7adeb1915414dedab20495eeb",
+  "corpus_sha256": "d9501d15c7cf8789f1fb8fcf37a65eb2430a513f2fb8bbdeb4de603e48a71a2f",
+  "gold_labels_path": "evals/annotation/human_gold.jsonl",
+  "gold_labels_key": "final_verdict",
+  "gold_labels_sha256": "1528e62f442e864853b8093dc20f74f15a8242a862301b0bd33a5f3f2781feee",
+  "previous_gold_labels_sha256": "c87de65c15534bd9f7557dac26eda074c0bb1eae9549dcfa4a88903131441ac1",
+  "judge_prompt_version": "v4-central-claim",
+  "judge_prompt_sha256": {
+    "F": "c5a03099990bfbc48a302edb918039798d494644db9b667a25d6c49bb314a756",
+    "B1": "f5c125045acbce09e8be9ef42a71ff158fda28c8027163c9d7e3541a566a798c"
+  },
+  "run_outputs_sha256": {
+    "new_cases_runs": "34b62ee1684ec0a2bb0e770b7b40b08b261d00871afec0ff4d40014af8b3126d",
+    "existing_rejudge": "993bc24efb9c6d8cfbff51e16b03a9dd56b1a50c2e0afc9b6cbc3005d15e1916",
+    "combined_runs": "60885e20011f1cc379418a88aa1488a8e36986a799442ba12ff0314dcc669000",
+    "combined_summary": "bed053b4f8820f9bbb37f52778bb4420cbc87187fca75963a6eb47fe28b60ac5"
+  },
+  "judge_v6_follow_up": {
+    "status": "completed-2026-08-30",
+    "scope": "judge-only F over all 60 saved F arguments, evidence and forensic reports",
+    "forbidden_reruns": [
+      "forensics_model",
+      "prosecutor",
+      "advocate",
+      "neutral_researcher",
+      "web_search"
+    ],
+    "prompt_version": "v6-adversarial-materiality-gate",
+    "prompt_sha256": "6de51561f2c1278e2082e542ef383cfe5f4200183f77179544cba32157c59e03",
+    "b1_control_prompt_version": "v4-central-claim",
+    "b1_control_prompt_sha256": "f5c125045acbce09e8be9ef42a71ff158fda28c8027163c9d7e3541a566a798c",
+    "method": "Deterministic class-balanced 24-case calibration and 36-case holdout. The v6 prompt was frozen after passing the preregistered calibration gate; holdout was opened exactly once.",
+    "preregistration_sha256": "f583d4532c969c89592fd9fe15337e893b5e557f47cd8e89f1ffe22ff7d2796b",
+    "calibration_gate_sha256": "5a2b8ae8a7fdc2a70b5dc559594eaf264cd37419a6be856c3f480259e81db62f",
+    "outputs_sha256": {
+      "calibration_runs": "37578b7184f30478f97577956aa6c406b24ae00bfe8dc96f588a0300e32d3d1a",
+      "holdout_runs": "95236069df181239ab164fffe1254d30874e71cf4d223d2b6cdc20c2b10c1fbf",
+      "full60_runs": "ba38e1e61f1e1ccda99da5a7600f121ad08f9c72ae0b94d7b06f8698cc3c3c11",
+      "full60_metrics": "c2c393d2d9a6501081be68e5e92596d910147835d193733598ba71894ba8b478",
+      "holdout_metrics": "a271ffc57e8671d3f2d9d84dfeae87bb818081654b5924e0f213287e580f0bf3",
+      "holdout_uncertainty_vs_B1": "af62cdc72e4b012219b903b99d3b7b09dd0ccf915caa5beba24884ef1b5b25c7",
+      "full60_uncertainty_vs_B1": "4188d84c8c2e44ca859a77db58a845d0c2dca2f8c5bed3cc82b1783eb5cf31f3",
+      "full60_uncertainty_vs_Fv4": "f0383654dd2f643d8d66909aff143c83db937c73b74a84f0890522d44c97165f"
+    },
+    "holdout_metrics": {
+      "F_v6": {"accuracy": 0.75, "macro_f1": 0.7571940604198669, "brier": 0.3185888888888889},
+      "B1_v4": {"accuracy": 0.6944444444444444, "macro_f1": 0.6984126984126985, "brier": 0.4457847222222221}
+    },
+    "full60_metrics": {
+      "F_v6": {"accuracy": 0.7333333333333333, "macro_f1": 0.7400284900284899, "brier": 0.36269666666666645},
+      "F_v4": {"accuracy": 0.6833333333333333, "macro_f1": 0.6904040404040405, "brier": 0.4099033333333332},
+      "B1_v4": {"accuracy": 0.7, "macro_f1": 0.6969696969696969, "brier": 0.4491108333333332}
+    }
+  },
+  "pending_gold_revision": {
+    "status": "pending-five-clarity-replacements-no-search-started",
+    "canonical_gold_sha256": "21e3bb85b1a3c951a850de45ed95e43ab09bceab57c0b5d2c461ed893860ba22",
+    "counts": {"reliable": 17, "questionable": 21, "unreliable": 22},
+    "relabelled": {
+      "TC22": {"from": "questionable", "to": "unreliable"},
+      "TC25": {"from": "reliable", "to": "questionable"},
+      "TC27": {"from": "questionable", "to": "unreliable"},
+      "TC34": {"from": "reliable", "to": "questionable"},
+      "TC35": {"from": "reliable", "to": "questionable"}
+    },
+    "replacement_candidates": ["TC06", "TC16", "TC37"],
+    "balance_requirement": "After replacing TC06, TC16 and TC37, restoring 20/20/20 still requires replacing one current Q and one current U with unambiguous R articles.",
+    "decision_log": "evals/annotation/gold_followup_decisions_2026-08-30.jsonl",
+    "historical_metrics_warning": "All v6 metrics were scored against the archived prior 20/20/20 gold hash 1528e62f442e864853b8093dc20f74f15a8242a862301b0bd33a5f3f2781feee and must not be silently rescored or described as results on this pending revision."
+  },
+  "judge_v7_candidate": {
+    "status": "prompt-ready-not-run",
+    "F_prompt_sha256": "8bc31e4cb897eef3110ec8c0229299f665a52fc0ed1f32506ded383cb5ee706e",
+    "B1_prompt_sha256": "f632d0888dab7e2bef1bd561beace9ea5d0d17adab2b1b081f390ced3200cfd2",
+    "changes": [
+      "contextual reading of ambiguous compressed wording",
+      "true-core versus false-central-conclusion counterfactual test",
+      "publication-time and headline-body rules",
+      "aggressor-state war communiques and professional propagandist doctrine",
+      "removed automatic questionable tie-break for close top-two probabilities"
+    ],
+    "run_policy": "Do not run until the five clarity replacements restore exact 20/20/20 gold and the user explicitly authorizes judge-only F/B1 execution."
+  },
+  "status": "pending-gold-rebalance-v7-prompt-ready-not-run",
   "search_transcript_sha256": null,
   "code_commit": "g4-code-freeze",
   "thresholds": {
@@ -25,5 +107,5 @@
     "jeansa": 0.6,
     "mt_translation": 0.5
   },
-  "notes": "B3 = no web search (search_context none); code_commit is git tag g4-code-freeze; gold sha256=9cca982f25c42c6db42336c358b0a4f97a48e62d0238455c646bcaf545d80358; transcript captured at pilot; model id to confirm at pilot."
+  "notes": "B3 = no web search. Canonical gold is exactly 20/20/20 after five clarity replacements. The completed incremental run executed F/B1/B2/B3 only for TC25, TC28, TC31, TC45 and TC51. Unchanged cases were rejudged only in F/B1 from saved arguments, evidence and a locally frozen deterministic forensic-report cache; party agents, detectors and web search were not rerun for them. F and B1 are complete all-60 v4 results. B2 and B3 in the combined artifact are intentionally hybrid: 55 historical pre-v4 records plus five new v4 records, exactly matching the requested scope. The later v6 follow-up reran only the F judge over frozen inputs and preserved full structured verdicts. Its holdout point estimate beats B1, but the paired 95% intervals still include zero, so the improvement is promising rather than statistically conclusive."
 }

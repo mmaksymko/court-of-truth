@@ -22,7 +22,7 @@ async def test_argument_uses_private_bounded_search_run(monkeypatch):
     assert agent.output_type is Argument
     assert agent.instructions == PROSECUTOR
     assert agent.model_settings.store is False
-    assert agent.model_settings.tool_choice == "required"
+    assert agent.model_settings.tool_choice == "auto"
     assert "web_search_call.action.sources" in agent.model_settings.response_include
     assert agent.model_settings.reasoning is not None
     assert agent.model_settings.reasoning.effort == "medium"

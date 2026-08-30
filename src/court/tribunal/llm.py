@@ -10,6 +10,36 @@ from court.tribunal.telemetry import CallTelemetry, Usage
 
 logger = logging.getLogger("court.tribunal")
 
+_DASHES = {ord("—"): "-", ord("–"): "-"}
+
+
+def _dedash(text: str) -> str:
+    return text.translate(_DASHES)
+
+
+def _normalize_argument_dashes(argument: Argument) -> None:
+    """Replace em/en dashes with a hyphen in every free-text field, deterministically.
+
+    The prompts used to forbid dashes in every field, spending model attention on a
+    cosmetic rule that nothing enforced. Doing it here guarantees the result and frees
+    the model to reason about substance.
+    """
+    argument.thesis = _dedash(argument.thesis)
+    for claim in argument.claims:
+        claim.text = _dedash(claim.text)
+    for source in argument.sources:
+        source.title = _dedash(source.title)
+        source.excerpt = _dedash(source.excerpt)
+        source.supports = _dedash(source.supports)
+
+
+def _normalize_verdict_dashes(verdict: Verdict) -> None:
+    verdict.rationale = _dedash(verdict.rationale)
+    verdict.source_assessment = _dedash(verdict.source_assessment)
+    verdict.key_signals = [_dedash(signal) for signal in verdict.key_signals]
+    for objection in verdict.objections:
+        objection.reason = _dedash(objection.reason)
+
 
 class LLMClient(Protocol):
     async def argue(self, role: Role, user: str) -> Argument: ...
@@ -81,6 +111,7 @@ class OpenAIAgentsClient:
             raise TribunalError(502, "tribunal_invalid_output", "tribunal returned invalid output")
         output.role = role
         validate_search_provenance(output, result)
+        _normalize_argument_dashes(output)
         return output
 
     async def judge(self, user: str) -> Verdict:
@@ -89,6 +120,7 @@ class OpenAIAgentsClient:
         output = result.final_output
         if not isinstance(output, Verdict):
             raise TribunalError(502, "tribunal_invalid_output", "tribunal returned invalid output")
+        _normalize_verdict_dashes(output)
         return output
 
     def _record(self, kind: str, result: Any) -> None:  # noqa: ANN401

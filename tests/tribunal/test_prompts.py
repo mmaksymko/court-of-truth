@@ -1,3 +1,5 @@
+import hashlib
+
 from court.forensics.schemas import OkResult
 from court.tribunal import instructions, prompts
 from court.tribunal.evidence import build_evidence
@@ -19,6 +21,13 @@ def test_instructions_describe_signals_criteria_search_and_truth_goal():
             assert token in role, token
     assert "власного пошуку не проводь" in instructions.JUDGE
     assert "відправні точки" in instructions.JUDGE
+
+
+def test_numbers_are_verification_targets_not_negative_signals():
+    for party in (instructions.PROSECUTOR, instructions.ADVOCATE, instructions.NEUTRAL):
+        assert "Наявність конкретних чисел сама собою не є негативною ознакою" in party
+        assert "Числа - це об'єкти перевірки" in party
+    assert "Наявність конкретних чисел сама собою не є негативною ознакою" in instructions.JUDGE
 
 
 def test_prompts_render_article_guard_and_evidence_records():
@@ -78,13 +87,13 @@ def test_judge_receives_article_and_source_excerpt():
     assert "Повний текст" in user
     assert "Перевірений фрагмент" in user
     assert "claim-1" in user
-    assert "[p1]" in user
+    assert "[ep1]" in user
     assert "неперевірен" in instructions.JUDGE
 
 
 def test_prompt_caps_article_and_includes_original_url():
     user = prompts.research("Заг", "x" * 30_000, report(), "https://example.org/original")
-    assert "матеріал скорочено" in user
+    assert "скорочено" in user
     assert "https://example.org/original" in user
     assert len(user) < 26_000
 
@@ -124,6 +133,11 @@ def test_b1_judge_prompt_does_not_assume_two_sides():
     assert "прокурора й адвоката" in adversarial
     assert "прокурора й адвоката" not in single
     assert "не припускай, що сторін дві" in single
+    assert "Синтез двох позицій" in adversarial
+    assert "Синтез двох позицій" not in single
+    assert "не є підставою усереднювати" in adversarial
+    assert "questionable не застосовуй" in adversarial
+    assert "Невисока впевненість сама собою не є" in adversarial
 
 
 def test_b2_judge_prompt_forces_empty_cited_detectors():
@@ -131,6 +145,16 @@ def test_b2_judge_prompt_forces_empty_cited_detectors():
     without = instructions.judge_instructions(include_forensics=False)
     assert "відправні точки" in with_forensics
     assert "cited_detectors має бути []" in without
+
+
+def test_b2_judge_prompt_stays_byte_identical_to_frozen_v8():
+    prompt = instructions.judge_instructions(include_forensics=False)
+    digest = hashlib.sha256(prompt.encode()).hexdigest()
+    assert digest == "0cf0079eb5fd7b9458ac8076ca07c465b0c765053912ebc6ad3ba63c58779893"
+    assert "Обов'язкові ворота рішення" not in prompt
+    assert "Пріоритет істинності над провенансом" not in prompt
+    assert "Одиниця в контексті" not in prompt
+    assert "Змішане повідомлення" not in prompt
 
 
 def test_b3_party_prompt_replaces_search_with_no_search_block():
@@ -142,14 +166,13 @@ def test_b3_party_prompt_replaces_search_with_no_search_block():
     assert "sources завжди порожнє" in without
 
 
-def test_judge_flags_propaganda_source_as_unreliable():
+def test_judge_uses_propaganda_source_as_context_not_automatic_label():
     judge = instructions.judge_instructions()
-    assert "Достовірність джерела" in judge
-    assert "cherry-picking" in judge
-    # A propaganda source makes the material unreliable even if a sentence is true,
-    # but ordinary state/biased sources stay under the general (questionable) rule.
-    assert "признач unreliable" in judge
-    assert "типово questionable" in judge
+    assert "Центральний тест" in judge
+    assert "Провенанс джерела" in judge
+    assert "ніколи не є автоматичною міткою" in judge
+    assert "не призначай unreliable лише через домен" in judge
+    assert "unreliable потребує окремої підстави" in judge
 
 
 def test_judge_evidence_block_neutralises_injected_close_tag():
@@ -200,11 +223,42 @@ def test_party_prompt_keeps_plan_internal_and_injection_safe():
 def test_judge_prompt_carries_calibration_and_guards():
     j = instructions.JUDGE
     assert "0,85" in j  # B5 numeric guardrail
-    assert "0,15" in j  # B5 margin rule
+    assert "0,15" not in j  # v7 removes the automatic questionable margin rule
+    assert "не є самостійною підставою для questionable" in j
     assert "передруки" in j  # B6 independence definition
     assert "сатир" in j  # A8 satire guard
     assert "маніпулятивним обрамленням" in j  # A9 true-but-manipulative framing
     assert "незалежно від" in j  # B2 judge-side injection rule
+
+
+def test_judge_prompt_carries_v7_gold_taxonomy_clarifications():
+    judge = instructions.judge_instructions()
+    for token in (
+        "Контекстуальне читання",
+        "Одиниця в контексті",
+        "Правдиве ядро й хибний висновок",
+        "Жанр і логічна сила тверджень",
+        "жанр не рятує матеріал від unreliable",
+        "Доказ лише можливого зв'язку не підтверджує категоричного правила",
+        "Обов'язкові ворота рішення",
+        "Для unreliable не потрібно, щоб хибним було кожне",
+        "Матеріальність периферії",
+        "Не стискай центральне повідомлення",
+        "Змішане повідомлення",
+        "не є підтвердженням рекламних фактів",
+        "Час і заголовок",
+        "пріоритетну драбину провенансу",
+        "Умови пункту (в) мають пріоритет",
+        "лише тоді, коли саме центральне твердження під ними лишається правдивим",
+        "Виняток: прозоре повідомлення про сам факт спірної заяви",
+        "Воєнна пропаганда й професійні пропагандисти",
+        "розвідувальної, безпекової",
+        "Факт, що така установа справді зробила заяву, не рятує",
+        "агресивну окупаційну війну",
+        "центральний зміст є unreliable",
+        "попередню мітку лише за фактичними твердженнями",
+    ):
+        assert token in judge
 
 
 def test_no_typographic_dash_in_output_prompts():
@@ -216,4 +270,6 @@ def test_no_typographic_dash_in_output_prompts():
     ):
         assert "—" not in prompt  # em dash
         assert "–" not in prompt  # en dash
-        assert "довге тире" in prompt  # C1 explicit output ban present
+        # The in-prompt dash ban was removed; dashes are now normalized
+        # deterministically in llm.py, so the instruction text no longer mentions it.
+        assert "довге тире" not in prompt

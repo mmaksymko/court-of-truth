@@ -1,8 +1,5 @@
 from pathlib import Path
 
-import pytest
-
-from court.tribunal.errors import TribunalError
 from court.tribunal.provenance import validate_search_provenance
 from court.tribunal.telemetry import SearchRecord, SearchSource
 from court.tribunal.transcript import RecordedSearchProvider, SearchTranscript
@@ -63,9 +60,14 @@ def test_recorded_provider_hits_and_tracks_misses():
     assert provider.misses == ["невідомий запит"]
 
 
-def test_provenance_accepts_urls_from_replay_allowed_set():
-    arg = argument("https://replayed.example/only")
-    result = Result(arg, source_urls=())
-    with pytest.raises(TribunalError):
-        validate_search_provenance(arg, result)
-    validate_search_provenance(arg, result, extra_allowed_urls={"https://replayed.example/only"})
+def test_provenance_keeps_only_grounded_or_replay_allowed_urls():
+    ungrounded = argument("https://replayed.example/only")
+    result = Result(ungrounded, source_urls=())
+    validate_search_provenance(ungrounded, result)
+    assert ungrounded.sources == []  # not in search metadata -> dropped
+
+    allowed = argument("https://replayed.example/only")
+    validate_search_provenance(
+        allowed, result, extra_allowed_urls={"https://replayed.example/only"}
+    )
+    assert len(allowed.sources) == 1  # present in the replay allow-set -> kept

@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, HttpUrl, model_validator
+from pydantic import BaseModel, Field, HttpUrl, TypeAdapter, field_validator, model_validator
 
 from court.forensics.schemas import ForensicReport
 
@@ -8,10 +8,26 @@ Stance = Literal["prosecutor", "advocate"]
 Role = Literal["prosecutor", "advocate", "neutral"]
 Label = Literal["reliable", "questionable", "unreliable"]
 
+# OpenAI structured outputs reject the JSON-schema `format: "uri"` that pydantic's
+# HttpUrl emits, so url fields are typed as plain `str` and validated by hand: the
+# schema stays a bare string while http(s) URLs are still enforced.
+_HTTP_URL = TypeAdapter(HttpUrl)
+
+
+def _validated_http_url(value: object) -> str:
+    text = str(value)
+    _HTTP_URL.validate_python(text)  # raises if not a valid http(s) URL
+    return text
+
 
 class Source(BaseModel):
-    claim_id: str = Field(min_length=1, max_length=80)
-    url: HttpUrl
+    claim_id: str = Field(min_length=1, max_length=8)
+    url: str = Field(min_length=1, max_length=2000)
+
+    @field_validator("url", mode="before")
+    @classmethod
+    def _check_url(cls, value: object) -> str:
+        return _validated_http_url(value)
     title: str = Field(default="", max_length=500)
     excerpt: str = Field(
         min_length=1,
@@ -54,12 +70,17 @@ class EvidenceRecord(BaseModel):
 
     id: str = Field(min_length=1, max_length=8)
     side: Role
-    claim_id: str = Field(min_length=1, max_length=80)
-    url: HttpUrl
+    claim_id: str = Field(min_length=1, max_length=8)
+    url: str = Field(min_length=1, max_length=2000)
     title: str = Field(default="", max_length=500)
     excerpt: str = Field(min_length=1, max_length=800)
     supports: str = Field(min_length=1, max_length=500)
     verification: Literal["search_url_only"] = "search_url_only"
+
+    @field_validator("url", mode="before")
+    @classmethod
+    def _check_url(cls, value: object) -> str:
+        return _validated_http_url(value)
 
 
 class Objection(BaseModel):
@@ -100,11 +121,15 @@ class Verdict(BaseModel):
     @model_validator(mode="after")
     def _derive_and_validate(self) -> "Verdict":
         probabilities = self.probabilities.as_map()
-        if abs(sum(probabilities.values()) - 1.0) > _PROBABILITY_TOLERANCE:
+        total = sum(probabilities.values())
+        if abs(total - 1.0) > _PROBABILITY_TOLERANCE:
             raise ValueError("verdict probabilities must sum to 1")
         if self.label != max(probabilities, key=lambda label: probabilities[label]):
             raise ValueError("verdict label must equal the most probable class")
-        self.confidence = probabilities[self.label]
+        # Renormalize by the actual sum so the tolerance band (0.98-1.02) never leaks
+        # into confidence: a run that summed to 1.02 must not report a confidence
+        # inflated above the true share, which would bias top-label ECE/Brier.
+        self.confidence = probabilities[self.label] / total if total else 0.0
         if len(self.used_evidence_ids) != len(set(self.used_evidence_ids)):
             raise ValueError("used_evidence_ids values must be unique")
         if len(self.cited_detectors) != len(set(self.cited_detectors)):

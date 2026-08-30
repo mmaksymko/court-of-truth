@@ -25,6 +25,14 @@ class ExperimentProtocol(BaseModel):
     search_context: dict[str, str] = Field(default_factory=dict)
     corpus_path: str = ""
     corpus_sha256: str = ""
+    gold_labels_path: str = ""
+    gold_labels_key: str = ""
+    gold_labels_sha256: str = ""
+    previous_gold_labels_sha256: str | None = None
+    judge_prompt_version: str = ""
+    judge_prompt_sha256: dict[str, str] = Field(default_factory=dict)
+    run_outputs_sha256: dict[str, str] = Field(default_factory=dict)
+    status: str = "ready"
     search_transcript_sha256: str | None = None
     code_commit: str = ""
     thresholds: dict[str, float] = Field(default_factory=dict)

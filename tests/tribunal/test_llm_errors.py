@@ -8,7 +8,7 @@ from tests.tribunal.llm_support import Result, argument, client
 
 
 @pytest.mark.asyncio
-async def test_unverified_source_and_unexpected_output_are_rejected(monkeypatch):
+async def test_ungrounded_source_is_dropped_and_unexpected_output_is_rejected(monkeypatch):
     results = iter([Result(argument()), Result("wrong")])
 
     async def fake_run(starting_agent, user, *, max_turns, run_config):
@@ -16,8 +16,11 @@ async def test_unverified_source_and_unexpected_output_are_rejected(monkeypatch)
 
     monkeypatch.setattr(agents.Runner, "run", fake_run)
     llm = client()
-    with pytest.raises(TribunalError, match="not grounded"):
-        await llm.argue("prosecutor", "user")
+    # An ungrounded source is silently discarded (no search metadata backs it),
+    # leaving the party with an empty evidence set instead of failing the review.
+    output = await llm.argue("prosecutor", "user")
+    assert output.sources == []
+    # A structurally wrong output is still a hard failure.
     with pytest.raises(TribunalError, match="invalid output"):
         await llm.judge("user")
 

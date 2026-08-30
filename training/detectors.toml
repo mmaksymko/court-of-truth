@@ -39,7 +39,6 @@ min_df = 3
 max_features = 150000
 c = 1.0
 class_weight = "balanced"
-split_field = "split"
 threshold_objective = "macro_f1"
 
 [clickbait]

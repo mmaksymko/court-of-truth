@@ -1,9 +1,8 @@
 import logging
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Protocol
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import unquote, urlsplit, urlunsplit
 
-from court.tribunal.errors import TribunalError
 from court.tribunal.schemas import Argument
 from court.tribunal.telemetry import SearchRecord, SearchSource
 
@@ -22,21 +21,28 @@ def validate_search_provenance(
     result: SearchResult,
     extra_allowed_urls: set[str] | None = None,
 ) -> None:
+    """Drop any source whose URL is not grounded in the executed web search.
+
+    A single ungrounded URL used to fail the whole review with a 502; that made a
+    minor citation slip (URL normalization drift, a cleaned tracking parameter)
+    poison an otherwise valid deliberation. Instead we silently discard the
+    ungrounded sources and keep the grounded ones - the party simply argues with a
+    smaller, fully verified evidence set. If every source is ungrounded the party
+    is left with no external evidence, which the Judge scores as thin support
+    (typically questionable), not as a service failure.
+    """
     allowed = {_canonical(url) for url in _search_urls(result)}
     if extra_allowed_urls:
         allowed |= {_canonical(url) for url in extra_allowed_urls}
-    submitted = {_canonical(str(source.url)) for source in argument.sources}
-    if not submitted.issubset(allowed):
+    grounded = [source for source in argument.sources if _canonical(str(source.url)) in allowed]
+    dropped = [source for source in argument.sources if source not in grounded]
+    if dropped:
         logger.warning(
-            "tribunal evidence not grounded in search: ungrounded=%s allowed=%s",
-            sorted(submitted - allowed),
+            "tribunal dropping ungrounded sources: dropped=%s allowed=%s",
+            sorted(str(source.url) for source in dropped),
             sorted(allowed),
         )
-        raise TribunalError(
-            502,
-            "tribunal_unverified_evidence",
-            "tribunal returned evidence not grounded in web search metadata",
-        )
+        argument.sources = grounded
 
 
 def search_records(result: SearchResult) -> list[SearchRecord]:
@@ -88,9 +94,16 @@ def _get(value: object, key: str, default: object = None) -> object:
 
 
 def _canonical(value: str) -> str:
+    # Normalize aggressively so that cosmetic differences between the search-result
+    # URL and the model-submitted URL do not falsely mark a real source ungrounded:
+    # lowercase host, drop a leading "www.", percent-decode the path (Cyrillic slugs
+    # arrive both encoded and decoded), strip the trailing slash and the query string
+    # (models routinely clean tracking parameters).
     parts = urlsplit(value)
     host = (parts.hostname or "").lower()
+    if host.startswith("www."):
+        host = host[4:]
     port = f":{parts.port}" if parts.port and parts.port not in {80, 443} else ""
     netloc = f"{host}{port}"
-    path = parts.path.rstrip("/") or "/"
-    return str(urlunsplit((parts.scheme.lower(), netloc, path, parts.query, "")))
+    path = unquote(parts.path).rstrip("/") or "/"
+    return str(urlunsplit((parts.scheme.lower(), netloc, path, "", "")))

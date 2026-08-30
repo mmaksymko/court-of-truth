@@ -8,6 +8,7 @@ runs against the live model by supplying real report and client factories.
 from __future__ import annotations
 
 import json
+import os
 import time
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import asdict, dataclass
@@ -33,6 +34,7 @@ class ItemInput:
     title: str
     text: str
     source_url: str | None = None
+    published: str | None = None
     gold: Label | None = None
 
 
@@ -46,6 +48,8 @@ class RunRecord:
     error_code: str | None
     elapsed_s: float | None = None
     usage: dict[str, int] | None = None
+    forensic_report: dict[str, object] | None = None
+    verdict: dict[str, object] | None = None
     arguments: list[dict[str, object]] | None = None
     evidence: list[dict[str, object]] | None = None
     searches: list[dict[str, object]] | None = None
@@ -64,6 +68,8 @@ async def run_item(  # noqa: PLR0913
     *,
     swap_order: bool = False,
     variant: str | None = None,
+    sequential_parties: bool = False,
+    party_delay_s: float = 0,
 ) -> RunRecord:
     # Telemetry (tokens, latency, the search trace) cannot be recovered after a paid
     # run, so it is captured here rather than logged and discarded.
@@ -78,7 +84,10 @@ async def run_item(  # noqa: PLR0913
             adversarial=mode.adversarial,
             include_forensics=mode.include_forensics,
             source_url=item.source_url,
+            published=item.published,
             swap_order=swap_order,
+            sequential_parties=sequential_parties,
+            party_delay_s=party_delay_s,
         )
     except TribunalError as exc:
         elapsed = time.perf_counter() - start
@@ -92,6 +101,7 @@ async def run_item(  # noqa: PLR0913
             exc.code,
             elapsed_s=elapsed,
             usage=usage_as_dict(aggregate_usage(calls)),
+            forensic_report=report.model_dump(mode="json"),
             searches=searches_as_dicts(calls),
             variant=variant,
         )
@@ -106,6 +116,8 @@ async def run_item(  # noqa: PLR0913
         None,
         elapsed_s=elapsed,
         usage=usage_as_dict(aggregate_usage(calls)),
+        forensic_report=report.model_dump(mode="json"),
+        verdict=verdict.model_dump(mode="json"),
         arguments=[argument.model_dump(mode="json") for argument in arguments],
         evidence=[record.model_dump(mode="json") for record in evidence],
         searches=searches_as_dicts(calls),
@@ -121,19 +133,64 @@ async def run_repeats(  # noqa: PLR0913
     *,
     repeats: int = 1,
     include_swapped: bool = False,
+    on_record: Callable[[RunRecord], None] | None = None,
+    sequential_parties: bool = False,
+    party_delay_s: float = 0,
 ) -> list[RunRecord]:
     """Repeat runs and an optional order-swapped run for stability analysis.
 
     Each pass re-runs the full deliberation, so this captures end-to-end variance
     and order sensitivity together; the variant tag records which pass produced
-    each record.
+    each record. ``on_record`` is invoked with every record the instant it is
+    produced, so a caller can persist each paid result immediately.
     """
     records: list[RunRecord] = []
+
+    def emit(record: RunRecord) -> RunRecord:
+        records.append(record)
+        if on_record is not None:
+            on_record(record)
+        return record
+
     for index in range(1, repeats + 1):
-        records.append(await run_item(item, mode, report, llm, variant=f"AB#{index}"))
+        emit(
+            await run_item(
+                item,
+                mode,
+                report,
+                llm,
+                variant=f"AB#{index}",
+                sequential_parties=sequential_parties,
+                party_delay_s=party_delay_s,
+            )
+        )
     if include_swapped:
-        records.append(await run_item(item, mode, report, llm, swap_order=True, variant="BA#1"))
+        emit(
+            await run_item(
+                item,
+                mode,
+                report,
+                llm,
+                swap_order=True,
+                variant="BA#1",
+                sequential_parties=sequential_parties,
+                party_delay_s=party_delay_s,
+            )
+        )
     return records
+
+
+def append_record_jsonl(path: Path, record: RunRecord) -> None:
+    """Append one run record to the JSONL file and flush+fsync it to disk.
+
+    Paid runs are not recoverable, so each record is durably persisted the moment
+    it completes; a crash mid-run then keeps everything finished so far instead of
+    losing the whole batch that used to be written only at the end.
+    """
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(asdict(record), ensure_ascii=False) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
 
 
 def write_records_jsonl(path: Path, records: Sequence[RunRecord]) -> None:

@@ -14,3 +14,28 @@ artifacts/**
 !artifacts/.gitkeep
 .idea/
 .artifact_backups/
+
+# Eval dev/intermediate runs and archives (final results live in evals/results/)
+evals/runs/
+evals/run_archive/
+# Backups
+evals/*.bak_*
+evals/**/*.bak_*
+# Dev planning / preregistration / build artifacts
+evals/judge_*_preregistration.json
+evals/judge_*_gate.json
+evals/incremental_run_plan.json
+evals/manifest.json
+# Superseded audit gold (contains model-assisted verdicts; human_gold.jsonl is canonical)
+evals/annotation/gold_final.jsonl
+evals/annotation/gold_final.jsonl.bak_*
+# Working annotation files (decisions captured in human_gold_history.jsonl)
+evals/annotation/gold_followup_decisions_*.jsonl
+evals/annotation/gold_revision_*.jsonl
+evals/annotation/human_arbitration_sheet.md
+evals/annotation/human_gold_invalidated_*.jsonl
+evals/annotation/recovered_source_urls.json
+evals/annotation/replacement_reviews.json*
+# One-off dev assembly scripts
+scripts/assemble_f_b2_refresh.py
+scripts/assemble_incremental.py

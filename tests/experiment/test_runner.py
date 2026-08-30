@@ -89,6 +89,10 @@ def test_run_item_captures_telemetry_positions_and_evidence():
     # Two parties plus the judge each report usage in the fake client.
     assert record.usage is not None
     assert record.usage["total_tokens"] == 45
+    assert record.forensic_report is not None
+    assert record.forensic_report["risk"]["flagged_count"] == 0
+    assert record.verdict is not None
+    assert record.verdict["label"] == record.label
     assert record.arguments is not None and len(record.arguments) == 2
     assert record.evidence is not None and len(record.evidence) >= 1
     assert record.searches is not None and len(record.searches) >= 1
@@ -103,6 +107,7 @@ def test_failed_run_still_records_telemetry():
     record = asyncio.run(run_item(_item("a"), FULL, report(), FailingJudge()))
     assert record.status == "failed"
     assert record.usage is not None and record.usage["total_tokens"] > 0
+    assert record.forensic_report is not None
     assert record.arguments is None
 
 
@@ -123,6 +128,8 @@ def test_write_records_jsonl_roundtrip(tmp_path: Path):
     assert parsed["item_id"] == "a"
     assert parsed["mode"] == "F"
     assert parsed["usage"]["total_tokens"] == 45
+    assert parsed["forensic_report"]["results"]
+    assert parsed["verdict"]["rationale"]
     assert parsed["arguments"] and parsed["searches"]
 
 
@@ -147,3 +154,30 @@ def test_evaluate_counts_failures_in_outcomes():
     summary = evaluate([record], {"a": "questionable"})
     assert summary["F"].outcomes.failures == 1
     assert summary["F"].itt_accuracy == 0.0
+
+
+def test_append_record_jsonl_streams_and_flushes(tmp_path):
+    from court.experiment.runner import RunRecord, append_record_jsonl
+
+    path = tmp_path / "runs.jsonl"
+    path.write_text("", encoding="utf-8")
+    for i in range(3):
+        append_record_jsonl(path, RunRecord(f"TC{i}", "F", "ok", "reliable", None, None))
+    lines = [line for line in path.read_text().splitlines() if line.strip()]
+    assert len(lines) == 3  # each record persisted immediately, in order
+    import json
+
+    assert [json.loads(line)["item_id"] for line in lines] == ["TC0", "TC1", "TC2"]
+
+
+def test_run_repeats_emits_each_record_via_callback():
+    import asyncio
+
+    from tests.fakes import FakeLLM
+    from tests.tribunal.support import report as _report
+
+    seen = []
+    asyncio.run(
+        run_repeats(_item("a"), FULL, _report(), FakeLLM(), repeats=2, on_record=seen.append)
+    )
+    assert [r.variant for r in seen] == ["AB#1", "AB#2"]  # streamed live, not just returned

@@ -78,23 +78,27 @@ def test_build_llm_constructs_with_key():
     assert isinstance(client, OpenAIAgentsClient)
 
 
-def test_unknown_detector_reference_is_rejected():
+def test_unknown_detector_reference_is_trimmed_not_fatal():
     class BadLLM(FakeLLM):
         async def argue(self, role, user):
             argument = await super().argue(role, user)
             argument.cited_detectors = ["unknown"]
             return argument
 
-    with pytest.raises(TribunalError, match="absent"):
-        asyncio.run(deliberate("Назва", "Текст", report(), BadLLM()))
+    result = asyncio.run(deliberate("Назва", "Текст", report(), BadLLM()))
+    # The hallucinated detector id is dropped; the deliberation still produces a verdict.
+    assert result.prosecutor.cited_detectors == []
+    assert result.advocate.cited_detectors == []
 
 
-def test_source_referencing_unknown_claim_is_rejected():
+def test_source_referencing_unknown_claim_is_dropped():
     class DanglingSourceLLM(FakeLLM):
         async def argue(self, role, user):
             argument = await super().argue(role, user)
-            argument.sources[0].claim_id = "не-існує"
+            argument.sources[0].claim_id = "нема"
             return argument
 
-    with pytest.raises(TribunalError, match="claim absent from the argument"):
-        asyncio.run(deliberate("Назва", "Текст", report(), DanglingSourceLLM()))
+    result = asyncio.run(deliberate("Назва", "Текст", report(), DanglingSourceLLM()))
+    # The orphaned source is discarded rather than failing the whole review.
+    assert result.prosecutor.sources == []
+    assert result.evidence == []
