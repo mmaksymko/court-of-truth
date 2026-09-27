@@ -39,3 +39,9 @@ evals/annotation/replacement_reviews.json*
 # One-off dev assembly scripts
 scripts/assemble_f_b2_refresh.py
 scripts/assemble_incremental.py
+
+# Local tool output and archived experiments
+.playwright-cli/
+output/
+.archive_ece/
+.gitignore.bak_*
