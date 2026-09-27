@@ -9,7 +9,7 @@ CONFINED = {
     "fastapi": {"api", "__main__.py"},
     "uvicorn": {"api", "__main__.py"},
     "starlette": {"api", "__main__.py"},
-    "httpx": {"api", "ingest"},
+    "httpx": {"api", "ingest", "ui"},
     "bs4": {"ingest"},
     "openai": {"tribunal"},
     "agents": {"tribunal"},
