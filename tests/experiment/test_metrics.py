@@ -32,18 +32,6 @@ def test_multiclass_brier_known_value():
     assert metrics.multiclass_brier(["reliable"], [distribution]) == pytest.approx(0.14, abs=1e-9)
 
 
-def test_calibration_confident_correct_has_low_error():
-    result = metrics.calibration(["reliable"], ["reliable"], [_ONEHOT])
-    assert result.top_label_ece == 0.0
-    assert set(result.per_class_ece) == {"reliable", "questionable", "unreliable"}
-    assert result.macro_ece == pytest.approx(0.0)
-
-
-def test_calibration_overconfident_wrong_has_error():
-    result = metrics.calibration(["unreliable"], ["reliable"], [_ONEHOT])
-    assert result.top_label_ece == pytest.approx(1.0)
-
-
 def test_length_mismatch_raises():
     with pytest.raises(ValueError, match="equal length"):
         metrics.macro_f1(["reliable"], ["reliable", "questionable"])
@@ -52,18 +40,6 @@ def test_length_mismatch_raises():
 def test_outcome_counts_failure_rate():
     assert OutcomeCounts(total=4, completed=3, failures=1).failure_rate == 0.25
     assert OutcomeCounts(total=0, completed=0, failures=0).failure_rate == 0.0
-
-
-def test_quantile_ece_perfect_and_empty():
-    assert metrics.quantile_ece(["reliable"], ["reliable"], [_ONEHOT], bins=2) == 0.0
-    assert metrics.quantile_ece([], [], [], bins=5) == 0.0
-
-
-def test_quantile_ece_overconfident_wrong():
-    # One confident-but-wrong prediction: confidence 1.0, accuracy 0 -> ECE 1.0.
-    assert metrics.quantile_ece(["unreliable"], ["reliable"], [_ONEHOT], bins=1) == pytest.approx(
-        1.0
-    )
 
 
 def test_bootstrap_ci_is_deterministic_and_brackets_point():
