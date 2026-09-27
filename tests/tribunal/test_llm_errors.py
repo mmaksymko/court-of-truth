@@ -11,7 +11,7 @@ from tests.tribunal.llm_support import Result, argument, client
 async def test_ungrounded_source_is_dropped_and_unexpected_output_is_rejected(monkeypatch):
     results = iter([Result(argument()), Result("wrong")])
 
-    async def fake_run(starting_agent, user, *, max_turns, run_config):
+    async def fake_run(starting_agent, user, *, max_turns, run_config, hooks=None):
         return next(results)
 
     monkeypatch.setattr(agents.Runner, "run", fake_run)
@@ -27,7 +27,7 @@ async def test_ungrounded_source_is_dropped_and_unexpected_output_is_rejected(mo
 
 @pytest.mark.asyncio
 async def test_model_behavior_error_is_stable_and_client_closes(monkeypatch):
-    async def fake_run(starting_agent, user, *, max_turns, run_config):
+    async def fake_run(starting_agent, user, *, max_turns, run_config, hooks=None):
         raise agents.ModelBehaviorError("sensitive provider detail")
 
     monkeypatch.setattr(agents.Runner, "run", fake_run)

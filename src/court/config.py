@@ -47,6 +47,8 @@ class Settings(BaseSettings):
     fetch_max_bytes: int = Field(default=2_000_000, gt=0)
     fetch_timeout_s: float = Field(default=15.0, gt=0)
     fetch_max_redirects: int = Field(default=3, ge=0, le=10)
+    # Where experiment runs store text snapshots of evidence pages; unset disables them.
+    evidence_cache_dir: Path | None = None
 
     operation_rate_per_minute: int = Field(default=10, gt=0)
     operation_concurrency: int = Field(default=4, gt=0)

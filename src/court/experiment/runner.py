@@ -12,10 +12,10 @@ import os
 import time
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Protocol
 
 from court.experiment import metrics
-from court.experiment.metrics import Calibration, Label, OutcomeCounts
+from court.experiment.metrics import Label, OutcomeCounts
 from court.tribunal.deliberation import deliberate_mode
 from court.tribunal.errors import TribunalError
 from court.tribunal.telemetry import aggregate_usage, searches_as_dicts, usage_as_dict
@@ -54,6 +54,11 @@ class RunRecord:
     evidence: list[dict[str, object]] | None = None
     searches: list[dict[str, object]] | None = None
     variant: str | None = None
+    evidence_snapshots: list[dict[str, object]] | None = None
+
+
+class EvidenceArchive(Protocol):
+    async def snapshot_all(self, urls: Sequence[str]) -> list[dict[str, object]]: ...
 
 
 ReportFor = Callable[[ItemInput], Awaitable["ForensicReport"]]
@@ -70,6 +75,7 @@ async def run_item(  # noqa: PLR0913
     variant: str | None = None,
     sequential_parties: bool = False,
     party_delay_s: float = 0,
+    archive: EvidenceArchive | None = None,
 ) -> RunRecord:
     # Telemetry (tokens, latency, the search trace) cannot be recovered after a paid
     # run, so it is captured here rather than logged and discarded.
@@ -107,6 +113,9 @@ async def run_item(  # noqa: PLR0913
         )
     elapsed = time.perf_counter() - start
     calls = llm.drain_telemetry()
+    snapshots = None
+    if archive is not None:
+        snapshots = await archive.snapshot_all([str(record.url) for record in evidence])
     return RunRecord(
         item.id,
         mode.name,
@@ -122,6 +131,7 @@ async def run_item(  # noqa: PLR0913
         evidence=[record.model_dump(mode="json") for record in evidence],
         searches=searches_as_dicts(calls),
         variant=variant,
+        evidence_snapshots=snapshots,
     )
 
 
@@ -136,6 +146,7 @@ async def run_repeats(  # noqa: PLR0913
     on_record: Callable[[RunRecord], None] | None = None,
     sequential_parties: bool = False,
     party_delay_s: float = 0,
+    archive: EvidenceArchive | None = None,
 ) -> list[RunRecord]:
     """Repeat runs and an optional order-swapped run for stability analysis.
 
@@ -162,6 +173,7 @@ async def run_repeats(  # noqa: PLR0913
                 variant=f"AB#{index}",
                 sequential_parties=sequential_parties,
                 party_delay_s=party_delay_s,
+                archive=archive,
             )
         )
     if include_swapped:
@@ -175,6 +187,7 @@ async def run_repeats(  # noqa: PLR0913
                 variant="BA#1",
                 sequential_parties=sequential_parties,
                 party_delay_s=party_delay_s,
+                archive=archive,
             )
         )
     return records
@@ -226,7 +239,6 @@ class ModeSummary:
     outcomes: OutcomeCounts
     macro_f1: float
     brier: float
-    calibration: Calibration
     itt_accuracy: float
 
 
@@ -252,7 +264,6 @@ def evaluate(
             ),
             macro_f1=metrics.macro_f1(gold_labels, predicted),
             brier=metrics.multiclass_brier(gold_labels, distributions),
-            calibration=metrics.calibration(gold_labels, predicted, distributions),
             itt_accuracy=correct / len(labelled) if labelled else 0.0,
         )
     return summaries

@@ -25,6 +25,8 @@ class SearchSource:
 class SearchRecord:
     query: str
     sources: tuple[SearchSource, ...] = ()
+    # UTC ISO-8601 moment the model response carrying this search reached the client.
+    executed_at: str | None = None
 
 
 @dataclass(frozen=True)
@@ -67,13 +69,14 @@ def searches_as_dicts(calls: Iterable[CallTelemetry]) -> list[dict[str, object]]
     records: list[dict[str, object]] = []
     for call in calls:
         for search in call.searches:
-            records.append(
-                {
-                    "kind": call.kind,
-                    "query": search.query,
-                    "sources": [
-                        {"url": source.url, "title": source.title} for source in search.sources
-                    ],
-                }
-            )
+            record: dict[str, object] = {
+                "kind": call.kind,
+                "query": search.query,
+                "sources": [
+                    {"url": source.url, "title": source.title} for source in search.sources
+                ],
+            }
+            if search.executed_at is not None:
+                record["executed_at"] = search.executed_at
+            records.append(record)
     return records

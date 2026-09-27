@@ -13,6 +13,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 from court.experiment.runner import (
+    EvidenceArchive,
     ItemInput,
     LLMFor,
     ReportFor,
@@ -41,6 +42,7 @@ async def run_experiment(  # noqa: PLR0913
     on_record: Callable[[RunRecord], None] | None = None,
     sequential_parties: bool = False,
     party_delay_s: float = 0,
+    archive: EvidenceArchive | None = None,
 ) -> list[RunRecord]:
     """Run every item through every mode (with repeats/order-swap), one report per item.
 
@@ -64,6 +66,7 @@ async def run_experiment(  # noqa: PLR0913
                         on_record=on_record,
                         sequential_parties=sequential_parties,
                         party_delay_s=party_delay_s,
+                        archive=archive,
                     )
                 )
         return records

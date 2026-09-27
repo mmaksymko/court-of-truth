@@ -27,12 +27,13 @@ from court.experiment.runner import append_record_jsonl
 from court.forensics.registry import load_registry
 from court.forensics.report import analyze
 from court.forensics.schemas import AnalyzeRequest
+from court.ingest.snapshot import PageArchive
 from court.tribunal.errors import TribunalError
 from court.tribunal.llm import LLMClient, build_llm
 
 if TYPE_CHECKING:
     from court.experiment.modes import ModeConfig
-    from court.experiment.runner import ItemInput
+    from court.experiment.runner import ItemInput, RunRecord
     from court.forensics.schemas import ForensicReport
 
 logger = logging.getLogger("court.experiment")
@@ -120,19 +121,28 @@ def main() -> None:
     runs_path = args.out / "runs.jsonl"
     runs_path.write_text("", encoding="utf-8")
 
-    records = asyncio.run(
-        run_experiment(
-            items,
-            modes,
-            report_for=report_for,
-            llm_for=llm_for,
-            repeats=args.repeats,
-            include_swapped=args.swapped,
-            on_record=lambda record: append_record_jsonl(runs_path, record),
-            sequential_parties=args.sequential_parties,
-            party_delay_s=args.party_delay_seconds,
-        )
-    )
+    async def run() -> list[RunRecord]:
+        archive = None
+        if settings.evidence_cache_dir is not None:
+            archive = PageArchive(settings.evidence_cache_dir, settings)
+        try:
+            return await run_experiment(
+                items,
+                modes,
+                report_for=report_for,
+                llm_for=llm_for,
+                repeats=args.repeats,
+                include_swapped=args.swapped,
+                on_record=lambda record: append_record_jsonl(runs_path, record),
+                sequential_parties=args.sequential_parties,
+                party_delay_s=args.party_delay_seconds,
+                archive=archive,
+            )
+        finally:
+            if archive is not None:
+                await archive.aclose()
+
+    records = asyncio.run(run())
     _, summary_path = write_outputs(args.out, records, gold)
     logger.info("wrote %s (%d records) and %s", runs_path, len(records), summary_path)
 

@@ -181,3 +181,25 @@ def test_run_repeats_emits_each_record_via_callback():
         run_repeats(_item("a"), FULL, _report(), FakeLLM(), repeats=2, on_record=seen.append)
     )
     assert [r.variant for r in seen] == ["AB#1", "AB#2"]  # streamed live, not just returned
+
+
+def test_run_item_journals_evidence_snapshots_when_archive_given():
+    class RecordingArchive:
+        def __init__(self) -> None:
+            self.urls: list[str] = []
+
+        async def snapshot_all(self, urls):
+            self.urls = list(urls)
+            return [{"url": url, "status": "saved"} for url in self.urls]
+
+    archive = RecordingArchive()
+    record = asyncio.run(run_item(_item("a"), FULL, report(), FakeLLM(), archive=archive))
+    assert archive.urls
+    assert record.evidence is not None
+    assert archive.urls == [entry["url"] for entry in record.evidence]
+    assert record.evidence_snapshots == [{"url": url, "status": "saved"} for url in archive.urls]
+
+
+def test_run_item_without_archive_keeps_snapshots_empty():
+    record = asyncio.run(run_item(_item("a"), FULL, report(), FakeLLM()))
+    assert record.evidence_snapshots is None

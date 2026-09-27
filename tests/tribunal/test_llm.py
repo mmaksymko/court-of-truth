@@ -10,7 +10,7 @@ from tests.tribunal.llm_support import URL, Result, argument, client
 async def test_argument_uses_private_bounded_search_run(monkeypatch):
     captured = {}
 
-    async def fake_run(starting_agent, user, *, max_turns, run_config):
+    async def fake_run(starting_agent, user, *, max_turns, run_config, hooks=None):
         captured.update(agent=starting_agent, turns=max_turns, config=run_config)
         return Result(argument(), (URL,))
 
@@ -45,7 +45,7 @@ def test_b3_party_has_no_web_search_tool():
 
 @pytest.mark.asyncio
 async def test_telemetry_captures_usage_and_search_trace(monkeypatch):
-    async def fake_run(starting_agent, user, *, max_turns, run_config):
+    async def fake_run(starting_agent, user, *, max_turns, run_config, hooks=None):
         return Result(argument(), (URL,))
 
     monkeypatch.setattr(agents.Runner, "run", fake_run)
@@ -71,7 +71,7 @@ async def test_judge_has_no_tools_and_private_output(monkeypatch):
         source_assessment="обмежена доказова база",
     )
 
-    async def fake_run(starting_agent, user, *, max_turns, run_config):
+    async def fake_run(starting_agent, user, *, max_turns, run_config, hooks=None):
         captured["agent"] = starting_agent
         return Result(verdict)
 

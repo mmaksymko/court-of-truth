@@ -45,14 +45,22 @@ def validate_search_provenance(
         argument.sources = grounded
 
 
-def search_records(result: SearchResult) -> list[SearchRecord]:
-    """Capture the executed web searches (query and returned sources) from one run.
+def search_records(
+    result: SearchResult,
+    response_times: Mapping[str, str] | None = None,
+    fallback_time: str | None = None,
+) -> list[SearchRecord]:
+    """Capture the executed web searches (query, sources, UTC time) from one run.
 
     Reuses the same response walk as provenance validation; the output feeds the
-    experiment telemetry and the frozen search transcript.
+    experiment telemetry and the frozen search transcript. ``response_times`` maps
+    a model response key (see ``response_key``) to the UTC moment it arrived; a
+    search inside an unmatched response gets ``fallback_time``.
     """
+    times = response_times or {}
     records: list[SearchRecord] = []
     for response in getattr(result, "raw_responses", []):
+        executed_at = times.get(response_key(response), fallback_time)
         for item in getattr(response, "output", []):
             if _get(item, "type") != "web_search_call":
                 continue
@@ -66,8 +74,20 @@ def search_records(result: SearchResult) -> list[SearchRecord]:
                     if url:
                         title = _get(source, "title", "") or ""
                         sources.append(SearchSource(url=str(url), title=str(title)))
-            records.append(SearchRecord(query=str(query or ""), sources=tuple(sources)))
+            records.append(
+                SearchRecord(
+                    query=str(query or ""),
+                    sources=tuple(sources),
+                    executed_at=executed_at,
+                )
+            )
     return records
+
+
+def response_key(response: object) -> str:
+    """Stable key of one model response: its API id, else its object identity."""
+    response_id = _get(response, "response_id")
+    return str(response_id) if response_id else f"obj:{id(response)}"
 
 
 def _search_urls(result: SearchResult) -> set[str]:
