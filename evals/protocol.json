@@ -16,21 +16,25 @@
     "B3": "none"
   },
   "corpus_path": "evals/cases.jsonl",
-  "corpus_sha256": "d9501d15c7cf8789f1fb8fcf37a65eb2430a513f2fb8bbdeb4de603e48a71a2f",
+  "corpus_sha256": "ca9250c1cd179c15934c389f880099b483d56f9680265e354d7c120e51ee2719",
   "gold_labels_path": "evals/annotation/human_gold.jsonl",
   "gold_labels_key": "final_verdict",
-  "gold_labels_sha256": "1528e62f442e864853b8093dc20f74f15a8242a862301b0bd33a5f3f2781feee",
+  "gold_labels_sha256": "a51d82fdb13dd8c3345815bc25c0960938bd7b13cf3b11156049663719e718ea",
   "previous_gold_labels_sha256": "c87de65c15534bd9f7557dac26eda074c0bb1eae9549dcfa4a88903131441ac1",
-  "judge_prompt_version": "v4-central-claim",
+  "judge_prompt_version": "final-mixed-v9c-v8",
   "judge_prompt_sha256": {
-    "F": "c5a03099990bfbc48a302edb918039798d494644db9b667a25d6c49bb314a756",
-    "B1": "f5c125045acbce09e8be9ef42a71ff158fda28c8027163c9d7e3541a566a798c"
+    "F": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d",
+    "B1": "69704eb59488f554778473be2b9b29a263d17959dbab21875864ed7f9b855d6d",
+    "B2": "0cf0079eb5fd7b9458ac8076ca07c465b0c765053912ebc6ad3ba63c58779893",
+    "B3": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d"
   },
   "run_outputs_sha256": {
-    "new_cases_runs": "34b62ee1684ec0a2bb0e770b7b40b08b261d00871afec0ff4d40014af8b3126d",
-    "existing_rejudge": "993bc24efb9c6d8cfbff51e16b03a9dd56b1a50c2e0afc9b6cbc3005d15e1916",
-    "combined_runs": "60885e20011f1cc379418a88aa1488a8e36986a799442ba12ff0314dcc669000",
-    "combined_summary": "bed053b4f8820f9bbb37f52778bb4420cbc87187fca75963a6eb47fe28b60ac5"
+    "canonical_results": "754750f906e0e24ac0165f55a5ba9058bbe0dfce806abb8a9c3228ab499091a0",
+    "analysis": "9df2d0876f31f9a3adf24d6e9642faf725319ec857881b65d22f2621d2116c09",
+    "metrics": "e25533c91b30ba87be05f65df574bdd0a106160dba238b1d0cb227fee570d9ff",
+    "dynamic_messages": "0fa0383fadfda035d1f9f2e978d03638da7d3781febe0b3b4126436bf9e6626a",
+    "provenance_audit": "5297b66cc79de70b9933360bee2c5273ca781e4908139319014f2759648c9936",
+    "current_context_audit": "788791e51cd1858f04de861e3b49b17e9212380e4b6735b53748384a13297ad7"
   },
   "judge_v6_follow_up": {
     "status": "completed-2026-08-30",
@@ -70,7 +74,7 @@
     }
   },
   "pending_gold_revision": {
-    "status": "pending-five-clarity-replacements-no-search-started",
+    "status": "superseded-completed-six-replacements",
     "canonical_gold_sha256": "21e3bb85b1a3c951a850de45ed95e43ab09bceab57c0b5d2c461ed893860ba22",
     "counts": {"reliable": 17, "questionable": 21, "unreliable": 22},
     "relabelled": {
@@ -81,12 +85,12 @@
       "TC35": {"from": "reliable", "to": "questionable"}
     },
     "replacement_candidates": ["TC06", "TC16", "TC37"],
-    "balance_requirement": "After replacing TC06, TC16 and TC37, restoring 20/20/20 still requires replacing one current Q and one current U with unambiguous R articles.",
+    "balance_requirement": "Historical requirement, subsequently satisfied; the frozen canonical gold is 20/20/20.",
     "decision_log": "evals/annotation/gold_followup_decisions_2026-08-30.jsonl",
     "historical_metrics_warning": "All v6 metrics were scored against the archived prior 20/20/20 gold hash 1528e62f442e864853b8093dc20f74f15a8242a862301b0bd33a5f3f2781feee and must not be silently rescored or described as results on this pending revision."
   },
   "judge_v7_candidate": {
-    "status": "prompt-ready-not-run",
+    "status": "superseded-by-completed-v8-v9c-protocol",
     "F_prompt_sha256": "8bc31e4cb897eef3110ec8c0229299f665a52fc0ed1f32506ded383cb5ee706e",
     "B1_prompt_sha256": "f632d0888dab7e2bef1bd561beace9ea5d0d17adab2b1b081f390ced3200cfd2",
     "changes": [
@@ -96,16 +100,48 @@
       "aggressor-state war communiques and professional propagandist doctrine",
       "removed automatic questionable tie-break for close top-two probabilities"
     ],
-    "run_policy": "Do not run until the five clarity replacements restore exact 20/20/20 gold and the user explicitly authorizes judge-only F/B1 execution."
+    "run_policy": "Historical preregistration condition; retained for audit only."
   },
-  "status": "pending-gold-rebalance-v7-prompt-ready-not-run",
+  "final_experiment": {
+    "status": "completed-2026-08-30",
+    "scope": {
+      "cases": 60,
+      "modes": ["F", "B1", "B2", "B3"],
+      "records": 240,
+      "fully_paired": true,
+      "gold_counts": {"reliable": 20, "questionable": 20, "unreliable": 20}
+    },
+    "canonical_result": {
+      "path": "evals/results/ablation_60.jsonl",
+      "sha256": "754750f906e0e24ac0165f55a5ba9058bbe0dfce806abb8a9c3228ab499091a0"
+    },
+    "analysis": {
+      "path": "evals/results/ablation_analysis.json",
+      "metrics_path": "evals/results/ablation_metrics.json",
+      "F": {"accuracy": 0.9, "macro_f1": 0.9019, "brier": 0.1955},
+      "B1": {"accuracy": 0.85, "macro_f1": 0.8517, "brier": 0.2427},
+      "B2": {"accuracy": 0.8333, "macro_f1": 0.8332, "brier": 0.2543},
+      "B3": {"accuracy": 0.45, "macro_f1": 0.3555, "brier": 0.6558}
+    },
+    "judge_prompt_sha256": {
+      "F": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d",
+      "B1": "69704eb59488f554778473be2b9b29a263d17959dbab21875864ed7f9b855d6d",
+      "B2": "0cf0079eb5fd7b9458ac8076ca07c465b0c765053912ebc6ad3ba63c58779893",
+      "B3": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d"
+    },
+    "provenance_audit": "evals/results/final_provenance_audit.json",
+    "current_context_audit": "evals/results/current_context_audit.json",
+    "checkpoint_restarts_are_separate_experiments": false,
+    "new_judge_robustness_experiments_required": false
+  },
+  "status": "completed-final-ablation-60x4",
   "search_transcript_sha256": null,
-  "code_commit": "g4-code-freeze",
+  "code_commit": "bf0f7d9c628360149cfa363cad22f77062ec0b95",
   "thresholds": {
     "ai_generated": 0.5,
     "clickbait": 0.7148534923067267,
     "jeansa": 0.6,
     "mt_translation": 0.5
   },
-  "notes": "B3 = no web search. Canonical gold is exactly 20/20/20 after five clarity replacements. The completed incremental run executed F/B1/B2/B3 only for TC25, TC28, TC31, TC45 and TC51. Unchanged cases were rejudged only in F/B1 from saved arguments, evidence and a locally frozen deterministic forensic-report cache; party agents, detectors and web search were not rerun for them. F and B1 are complete all-60 v4 results. B2 and B3 in the combined artifact are intentionally hybrid: 55 historical pre-v4 records plus five new v4 records, exactly matching the requested scope. The later v6 follow-up reran only the F judge over frozen inputs and preserved full structured verdicts. Its holdout point estimate beats B1, but the paired 95% intervals still include zero, so the improvement is promising rather than statistically conclusive."
+  "notes": "B3 disables web search. The canonical final experiment is the fully paired 60-case by four-mode artifact in evals/results/ablation_60.jsonl. Intermediate v4, v6, v7 and v8 records are retained as audit history and must not replace the final metrics. Checkpoint resumptions reduced token cost and are counted only as execution mechanics within the single planned corpus run, not as additional experiments. Judge robustness to adversarial or paraphrased inputs is not claimed and no new experiment is required."
 }

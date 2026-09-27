@@ -10,30 +10,29 @@ under `runs/` was produced against the keyed model.
 - `cases.jsonl` — 60 cases (TC01..TC60), one JSON object per line. Each carries
   the article `title`/`text`/`source_url` pulled from its source CSV row, the
   detector `signal`, `control_type`, `search_necessity`, a normalized
-  `text_sha256`, provenance (`split`, `leakage_caveat`) and a legacy `gold`
-  verdict (see below). Reproducible from the plan tables (`build_corpus.py`
-  regenerates it byte-for-byte).
-- `annotation/human_gold.jsonl` — **the canonical, currently pending-rebalance
-  gold** (`{id, final_verdict}`, one line per case). The earlier independent curator
-  revision `gold-rebalance-20-20-20-2026-08-30` fixed the balance at 20/20/20;
-  the later user clarification changed five labels to an interim 17/21/22 and
-  marked TC06, TC16 and TC37 for replacement. Do not launch the next experiment
-  until five clarity replacements restore exact 20/20/20;
+  `text_sha256`, provenance (`split`, `leakage_caveat`) and an embedded copy of
+  the canonical verdict. `build_corpus.py` overlays that verdict from
+  `human_gold.jsonl`; the other fields under `gold` are historical curation notes
+  and are not used for scoring.
+- `annotation/human_gold.jsonl` — **the frozen canonical gold**
+  (`{id, final_verdict}`, one line per case), balanced at 20/20/20 after six
+  article replacements. The former 17/21/22 state and its replacement plan are
+  historical stages, not unfinished work;
   `annotation/human_gold_history.jsonl` keeps the append-only rationale,
   timestamp, source URL and prior decisions.
-  `cases.jsonl.gold.verdict` is an **earlier plan-table label kept for audit
-  only** — it differs from the human gold on 15 of 60 cases and is never scored
-  against. The older `annotation/gold_final.jsonl` (single curator + Fable
+  `cases.jsonl.gold.verdict` is synchronized with this file only to make corpus
+  regeneration deterministic; the experiment runner reads the separate gold
+  file. The older `annotation/gold_final.jsonl` (single curator + Fable
   ML-arbitration) is **superseded** by the human annotation and retained only for
   audit trail.
-- `manifest.json` — `human_gold_verdict_counts` (canonical), `legacy_verdict_counts`
-  (audit), `human_gold_annotator_counts`, `signal_counts`, `cases_sha256`,
+- `manifest.json` — `human_gold_verdict_counts` (canonical),
+  `embedded_verdict_counts`, `human_gold_annotator_counts`, `signal_counts`, `cases_sha256`,
   `human_gold_sha256`, source-CSV hashes, annotation status.
 - `protocol.json` — run descriptor; `gold_labels_path` points at
   `annotation/human_gold.jsonl`, `gold_labels_key = final_verdict`, and status is
-  `pending-gold-rebalance-v7-prompt-ready-not-run`. `incremental_run_plan.json` pins the
-  exact five-case full run and the 55-case F/B1 judge-only refresh; the protocol's
-  `judge_v6_follow_up` block pins the later F-only calibration/holdout run.
+  `completed-final-ablation-60x4`. Its `final_experiment` block identifies the
+  canonical 240-record result. Earlier incremental and calibration blocks are
+  retained only to reconstruct the execution history.
 - `check_report.json` — integrity (real CSV re-read + hash), dedup + near-duplicate
   pairs, test-split, quantified detector leakage, and shortcut baselines
   (signal / domain / signal+domain against the human gold).
@@ -45,13 +44,49 @@ under `runs/` was produced against the keyed model.
   deterministic forensic reports for unchanged articles. The historical run did
   not persist these objects; the paid judge-only refresh reads this cache and
   does not rerun detectors or parties.
+- `results/ablation_60.jsonl` — canonical final result: 60 cases × four modes,
+  exactly one final verdict per case and mode.
+- `results/ablation_analysis.json` — validated metrics, paired bootstrap
+  intervals, calibration summaries and Holm-adjusted comparisons.
+- `results/final_provenance_audit.json` and
+  `results/current_context_audit.json` — traceability of verdict values and the
+  best recoverable current input context. They explicitly preserve the
+  historical limitation that judge-only outputs did not bind their source run
+  by path and hash.
 
 Every newly produced `RunRecord` now persists its full `forensic_report` in
 `runs.jsonl`, including failed tribunal runs. Future judge-only refreshes can
 reuse the exact saved report directly; the separate reconstruction cache is
 needed only for historical records created before this field existed.
 
-## Completed v4 incremental refresh
+## Canonical final ablation
+
+The completed planned experiment contains **60 test cases and 240 final
+verdicts**: one F, B1, B2 and B3 result for every case. Checkpoint resumptions
+were an execution mechanism used to limit token costs; they are not counted as
+additional experiments. The canonical artifact is
+`results/ablation_60.jsonl` (SHA-256
+`754750f906e0e24ac0165f55a5ba9058bbe0dfce806abb8a9c3228ab499091a0`).
+
+| mode | accuracy | macro-F1 | Brier |
+|------|----------|----------|-------|
+| F | 0.9000 | 0.9019 | 0.1955 |
+| B1 | 0.8500 | 0.8517 | 0.2427 |
+| B2 | 0.8333 | 0.8332 | 0.2543 |
+| B3 | 0.4500 | 0.3555 | 0.6558 |
+
+The paired macro-F1 differences are F−B1 = 0.0502 (95% bootstrap CI
+[-0.0334, 0.1381]), F−B2 = 0.0687 ([-0.0026, 0.1509]) and F−B3 = 0.5464
+([0.4254, 0.6742]). Only the F−B3 paired correctness difference remains
+statistically clear after Holm correction (`p = 1.39e-6`). These intervals
+quantify sampling uncertainty on this fixed corpus; they do not remove the
+selection, annotation, leakage, domain, topic or version confounds.
+
+No experiment on Judge robustness to adversarial edits or paraphrases belongs
+to the final scope, and no such robustness claim is made. The research phase is
+therefore complete without additional model calls.
+
+## Historical stage: completed v4 incremental refresh
 
 The requested scoped refresh completed with **240/240 successful combined
 records**:
@@ -77,7 +112,7 @@ full-corpus v4 rerun.
 Artifacts: `runs/incremental_v4_new_cases/`,
 `runs/rejudge_v4_existing.jsonl`, and `runs/incremental_v4_combined/`.
 
-## Completed v6 F judge refresh
+## Historical stage: completed v6 F judge refresh
 
 The F judge was updated with a generic adversarial evidence-synthesis and
 materiality gate. It contains no case IDs, domains, articles or gold-label-specific
@@ -115,21 +150,19 @@ uv run --no-sync python evals/build_corpus.py         # cases.jsonl + manifest
 uv run --no-sync python evals/check_corpus.py         # check_report.json
 ```
 
-Source of truth is `docs/completion-plan/13-curated-corpus.md` (case metadata)
-and `14-gold-labels.md` (legacy label). The build joins them by case id, checks
-that both tables agree on `dataset#row`, and reads the text from the CSV by
-integer row position. The **canonical labels live in `annotation/human_gold.jsonl`**,
-not in those plan tables.
+The historical plan tables `docs/completion-plan/13-curated-corpus.md` and
+`14-gold-labels.md` provide case metadata and curation notes. The build joins
+them by case id, checks that both tables agree on `dataset#row`, reads the text
+from the CSV by integer row position, then overlays the canonical verdict from
+`annotation/human_gold.jsonl`. The old plan files remain unchanged.
 
 ## Corpus composition (N = 60)
 
-- **Canonical pending-rebalance gold:** 17 reliable / 21 questionable / 22 unreliable.
-  The archived v6 metrics were scored against the prior 20/20/20 hash and must
-  not be presented as metrics on this interim revision.
-- **Detector signals:** mt 21, none 21, ai 12, jeansa 6. (No `clickbait` case
+- **Canonical gold:** 20 reliable / 20 questionable / 20 unreliable.
+- **Detector signals:** mt 21, none 22, ai 12, jeansa 5. (No `clickbait` case
   survived into the final corpus; the clickbait detector is therefore not
   exercised by this eval set.)
-- `search_necessity`: 50 search-required / 10 article-sufficient. Every case now
+- `search_necessity`: 53 search-required / 7 article-sufficient. Every case
   has a `source_url` (0 missing).
 
 ## Integrity findings (`check_report.json`)
@@ -142,23 +175,22 @@ not in those plan tables.
 - **Detector leakage (quantified, threats-to-validity):** `ai_generated` and
   `mt_translation` have **no split field** (only jeansa/clickbait do), so their
   "held-out tail" is held out from the jeansa/clickbait split, not from their own
-  detector. Of the 53 tail (ai+mt) cases, **32 fall inside the model's reproduced
-  training partition** (seed 42) — i.e. ~53% of the corpus is in detector train.
+  detector. Of the 52 tail (ai+mt) cases, **31 fall inside the model's reproduced
+  training partition** (seed 42) — i.e. about 52% of the corpus is in detector train.
   For those items the local detector score fed to the tribunal is partly
   in-sample. (Membership is pre-dedup, an upper bound.)
-- **Shortcut baselines remain high.** Most-frequent-verdict accuracy against the
-  current interim gold (all 60): **signal 0.717, domain 0.783, signal+domain 0.783**
-  (primary-only: 0.712 / 0.788 / 0.788). The corpus is still
+- **Shortcut baselines remain high.** Group-majority accuracy against the
+  canonical gold (all 60): **signal 0.750, domain 0.733, signal+domain 0.750**
+  (primary-only: 0.750 / 0.731 / 0.750). The corpus is still
   disinformation-heavy: 21 of 60 cases are `ua.news-pravda.com` (Pravda /
   Portal Kombat network), 15 of the 20 `unreliable` cases carry the `mt` signal,
   and the `mt` signal set is **exactly collinear** with that domain (21 == 21)
-  and with the Russian-disinformation topic. Detector signal, machine-translation,
-  domain and topic cannot be separated on this corpus — an inherent property of
-  the material, not a fixable flaw. The domain shortcut (0.767) is an in-sample
-  oracle (it peeks at the gold to pick each group's majority) and is **not a
-  deployable classifier**, but it must be reported next to the system's accuracy
-  predictor. Existing system metrics predate the gold revision and must not be
-  compared with this new baseline until a clean rerun.
+  and is strongly confounded with the Russian-disinformation topic. Detector
+  signal, machine translation, domain and topic cannot be cleanly separated on
+  this corpus — an inherent property of the material, not a fixable flaw. Each
+  shortcut is an in-sample oracle (it peeks at the gold to pick each group's
+  majority), not a deployable classifier. The values are reported as threats to
+  validity, not as alternatives to the system.
 
 ## Historical pre-revision ablation results (`runs/runs.jsonl`, N = 60)
 
@@ -202,8 +234,8 @@ estimates.
 with benign content.
 
 `dataset_label` (raw source label): `ai_translated_ua` (21, = mt), `human_ua`
-(14), `ai_generated` (12), `human_news` (6), `sponsored` (6, jeansa),
-`editorial` (1).
+(14), `ai_generated` (12), `human_news` (5), `sponsored` (5, jeansa),
+`editorial` (3).
 These are provenance tags and do **not** map one-to-one onto the 3-class gold.
 
 ## Threats to validity (summary)
@@ -216,9 +248,8 @@ These are provenance tags and do **not** map one-to-one onto the 3-class gold.
    translation, and of the domain prior cannot be disentangled.
 3. **Detector leakage.** ~50% of cases are in the ai/mt detector training
    partition, so detector scores fed to the tribunal are partly in-sample.
-4. **Small N and pending balance.** N=60 is temporarily 17/21/22 while five
-   clarity replacements are pending; the target remains exact 20/20/20. Confidence
-   intervals remain wide. Recompute all metrics after the replacements.
+4. **Small N.** The balanced corpus contains 60 cases. Confidence intervals
+   remain wide, and class balance alone does not make the sample representative.
 5. **Superseded artifacts.** `gold_final.jsonl` and the Fable second-annotation /
    arbitration files are earlier ML-assisted stages, kept for audit only; the
    canonical gold is the human annotation in `human_gold.jsonl`.

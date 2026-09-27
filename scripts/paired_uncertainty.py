@@ -15,14 +15,14 @@ from court.experiment.metrics import macro_f1
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path, required=True)
-    parser.add_argument("--candidate-mode", choices=("F", "B1", "B2"), default="F")
+    parser.add_argument("--candidate-mode", choices=("F", "B1", "B2", "B3"), default="F")
     parser.add_argument("--baseline", type=Path, required=True)
-    parser.add_argument("--baseline-mode", choices=("F", "B1", "B2"), required=True)
+    parser.add_argument("--baseline-mode", choices=("F", "B1", "B2", "B3"), required=True)
     parser.add_argument("--gold", type=Path, required=True)
     parser.add_argument("--ids", nargs="+", required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--resamples", type=int, default=50_000)
-    parser.add_argument("--seed", type=int, default=20260830)
+    parser.add_argument("--resamples", type=int, default=3_000)
+    parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
 

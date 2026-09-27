@@ -1,11 +1,13 @@
 """Serialize the 60 curated tribunal cases into evals/cases.jsonl + a manifest.
 
-Single source of truth is the two Markdown tables in docs/completion-plan/
-(13-curated-corpus.md for case metadata, 14-gold-labels.md for the gold verdict).
+The historical Markdown tables in docs/completion-plan/ provide case metadata
+and the original curation notes.  Canonical verdicts are read from
+annotation/human_gold.jsonl and overlaid by case id.
 The article title, body and URL are pulled from the source CSV row by integer
 position (0-based over data rows, header excluded), matching how the corpus was
 curated. Nothing here is invented: the gold verdicts are the single-curator
-labels recorded in 14-gold-labels.md and are tagged as such.
+notes recorded in 14-gold-labels.md; the external gold file remains the scoring
+source of truth.
 
 Run: uv run --no-sync python evals/build_corpus.py
 """
@@ -92,6 +94,14 @@ def build() -> None:
     if missing:
         raise SystemExit(f"corpus/gold id mismatch: {sorted(missing)}")
 
+    canonical_gold = _canonical_gold()
+    if set(canonical_gold) != set(corpus):
+        missing_gold = sorted(set(corpus) - set(canonical_gold))
+        extra_gold = sorted(set(canonical_gold) - set(corpus))
+        raise SystemExit(
+            f"canonical gold/corpus mismatch: missing={missing_gold}, extra={extra_gold}"
+        )
+
     cases: list[dict[str, object]] = []
     for item_id in sorted(corpus, key=lambda name: int(name[2:])):
         c = corpus[item_id]
@@ -123,7 +133,10 @@ def build() -> None:
                     "leakage_caveat": dataset in TAIL_DATASETS,
                 },
                 "gold": {
-                    "verdict": g[4],
+                    # The remaining fields are historical curation notes.  The
+                    # verdict is overlaid from the frozen scoring gold so a rebuild
+                    # cannot silently restore a superseded plan-table label.
+                    "verdict": canonical_gold[item_id],
                     "confidence": float(g[5]),
                     "key_external_fact": _dash(g[6]),
                     "evidence_url": _dash(g[7]),
@@ -140,7 +153,7 @@ def build() -> None:
         for case in cases:
             handle.write(json.dumps(case, ensure_ascii=False, sort_keys=True) + "\n")
 
-    legacy_verdicts = _counter(case["gold"]["verdict"] for case in cases)  # type: ignore[index]
+    embedded_verdicts = _counter(case["gold"]["verdict"] for case in cases)  # type: ignore[index]
     signals = _counter(str(case["signal"]) for case in cases)
     human_verdicts, human_methods = _final_labels()
     human_gold_path = OUT_DIR / "annotation" / "human_gold.jsonl"
@@ -148,11 +161,11 @@ def build() -> None:
         "n_cases": len(cases),
         # CANONICAL gold = annotation/human_gold.jsonl (latest adjudication, all 60 cases);
         # the experiment scores against these human_gold_verdict_counts - cite these.
-        # legacy_verdict_counts are the earlier plan-table labels embedded in cases.jsonl,
-        # kept only for audit (they differ from the human gold and are NOT scored against).
+        # The embedded verdict is synchronized for deterministic regeneration, but
+        # scoring still reads the separate human_gold.jsonl file.
         "human_gold_verdict_counts": human_verdicts,
         "human_gold_annotator_counts": human_methods,
-        "legacy_verdict_counts": legacy_verdicts,
+        "embedded_verdict_counts": embedded_verdicts,
         "signal_counts": signals,
         "search_required": sum(c["search_necessity"] == "search-required" for c in cases),
         "leakage_caveat_items": sum(c["provenance"]["leakage_caveat"] for c in cases),  # type: ignore[index]
@@ -164,9 +177,10 @@ def build() -> None:
             "all 60 cases at 20 reliable / 20 questionable / 20 unreliable, with six "
             "current article replacements and written rationales (canonical labels in "
             "annotation/human_gold.jsonl; "
-            "append-only provenance in human_gold_history.jsonl). cases.jsonl carries an "
-            "earlier plan-table label kept for audit only. No human inter-annotator "
-            "agreement is claimed."
+            "append-only provenance in human_gold_history.jsonl). The verdict mirrored "
+            "inside cases.jsonl is synchronized for deterministic regeneration; scoring "
+            "uses human_gold.jsonl. The other embedded gold fields retain historical "
+            "curation notes. No human inter-annotator agreement is claimed."
         ),
     }
     (OUT_DIR / "manifest.json").write_text(
@@ -200,6 +214,18 @@ def _final_labels() -> tuple[dict[str, int], dict[str, int]]:
                 latest[str(record["id"])] = str(record.get("annotator", "unknown"))
     methods = _counter(latest.values())
     return dict(sorted(verdicts.items())), dict(sorted(methods.items()))
+
+
+def _canonical_gold() -> dict[str, str]:
+    path = OUT_DIR / "annotation" / "human_gold.jsonl"
+    if not path.exists():
+        raise SystemExit(f"canonical gold is missing: {path}")
+    result: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            record = json.loads(line)
+            result[str(record["id"])] = str(record["final_verdict"])
+    return result
 
 
 def _counter(values: object) -> dict[str, int]:
