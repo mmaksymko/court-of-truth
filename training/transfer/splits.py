@@ -56,7 +56,7 @@ def seeded_outlet_split(
     validate_binary_parts(parts, "label")
     assert_group_isolation(parts, group_field)
     audit = {
-        "algorithm": ("default_rng(seed) shuffle + sequential nearest-row-budget allocation"),
+        "algorithm": "default_rng(seed) shuffle + sequential nearest-row-budget allocation",
         "seed": seed,
         "target_fractions": dict(zip(SPLIT_NAMES, fractions, strict=True)),
         "actual_rows": {name: len(part) for name, part in parts.items()},

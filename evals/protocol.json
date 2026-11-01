@@ -1,0 +1,147 @@
+{
+  "model": "gpt-5.6-luna",
+  "seed": 42,
+  "repeats": 1,
+  "include_swapped": false,
+  "modes": [
+    "F",
+    "B1",
+    "B2",
+    "B3"
+  ],
+  "search_context": {
+    "F": "medium",
+    "B1": "medium",
+    "B2": "medium",
+    "B3": "none"
+  },
+  "corpus_path": "evals/cases.jsonl",
+  "corpus_sha256": "ca9250c1cd179c15934c389f880099b483d56f9680265e354d7c120e51ee2719",
+  "gold_labels_path": "evals/annotation/human_gold.jsonl",
+  "gold_labels_key": "final_verdict",
+  "gold_labels_sha256": "a51d82fdb13dd8c3345815bc25c0960938bd7b13cf3b11156049663719e718ea",
+  "previous_gold_labels_sha256": "c87de65c15534bd9f7557dac26eda074c0bb1eae9549dcfa4a88903131441ac1",
+  "judge_prompt_version": "final",
+  "judge_prompt_sha256": {
+    "F": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d",
+    "B1": "69704eb59488f554778473be2b9b29a263d17959dbab21875864ed7f9b855d6d",
+    "B2": "00fc3f236e9ea6bec8ad759096cd6c50814c91cc66b75de4bff54e899821196f",
+    "B3": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d"
+  },
+  "run_outputs_sha256": {
+    "canonical_results": "ac0dcc42f5ec6c29b21cc7db231c8d36df2c45f88f581bfdfa505cd1361bac52",
+    "analysis": "ef5e23df8dd2c359cda23a87ce00d82aeb2d9fb7c4d01282a62a203762b92d25",
+    "metrics": "ff4f23a945e39c5cfeb6366a5d7490290090f7c5c639bf27a6c456c797beb948",
+    "dynamic_messages": "da0078de652e5b5fdd904602204c3f36d6d4e9e21df4eb64b2be55fda9620331",
+    "provenance_audit": "d643389774ec5a7e0d07aa2bb591548c5bc5b8009f689b60ae0e239a840661aa",
+    "current_context_audit": "14288def922accad1409308fc5e3deb87addc5b8336f6f3b6e3dbe20df4883a6"
+  },
+  "judge_v6_follow_up": {
+    "status": "completed-2026-08-30",
+    "scope": "judge-only F over all 60 saved F arguments, evidence and forensic reports",
+    "forbidden_reruns": [
+      "forensics_model",
+      "prosecutor",
+      "advocate",
+      "neutral_researcher",
+      "web_search"
+    ],
+    "prompt_version": "v6-adversarial-materiality-gate",
+    "prompt_sha256": "6de51561f2c1278e2082e542ef383cfe5f4200183f77179544cba32157c59e03",
+    "b1_control_prompt_version": "v4-central-claim",
+    "b1_control_prompt_sha256": "f5c125045acbce09e8be9ef42a71ff158fda28c8027163c9d7e3541a566a798c",
+    "method": "Deterministic class-balanced 24-case calibration and 36-case holdout. The v6 prompt was frozen after passing the preregistered calibration gate; holdout was opened exactly once.",
+    "preregistration_sha256": "f583d4532c969c89592fd9fe15337e893b5e557f47cd8e89f1ffe22ff7d2796b",
+    "calibration_gate_sha256": "5a2b8ae8a7fdc2a70b5dc559594eaf264cd37419a6be856c3f480259e81db62f",
+    "outputs_sha256": {
+      "calibration_runs": "37578b7184f30478f97577956aa6c406b24ae00bfe8dc96f588a0300e32d3d1a",
+      "holdout_runs": "95236069df181239ab164fffe1254d30874e71cf4d223d2b6cdc20c2b10c1fbf",
+      "full60_runs": "ba38e1e61f1e1ccda99da5a7600f121ad08f9c72ae0b94d7b06f8698cc3c3c11",
+      "full60_metrics": "c2c393d2d9a6501081be68e5e92596d910147835d193733598ba71894ba8b478",
+      "holdout_metrics": "a271ffc57e8671d3f2d9d84dfeae87bb818081654b5924e0f213287e580f0bf3",
+      "holdout_uncertainty_vs_B1": "af62cdc72e4b012219b903b99d3b7b09dd0ccf915caa5beba24884ef1b5b25c7",
+      "full60_uncertainty_vs_B1": "4188d84c8c2e44ca859a77db58a845d0c2dca2f8c5bed3cc82b1783eb5cf31f3",
+      "full60_uncertainty_vs_Fv4": "f0383654dd2f643d8d66909aff143c83db937c73b74a84f0890522d44c97165f"
+    },
+    "holdout_metrics": {
+      "F_v6": {"accuracy": 0.75, "macro_f1": 0.7571940604198669, "brier": 0.3185888888888889},
+      "B1_v4": {"accuracy": 0.6944444444444444, "macro_f1": 0.6984126984126985, "brier": 0.4457847222222221}
+    },
+    "full60_metrics": {
+      "F_v6": {"accuracy": 0.7333333333333333, "macro_f1": 0.7400284900284899, "brier": 0.36269666666666645},
+      "F_v4": {"accuracy": 0.6833333333333333, "macro_f1": 0.6904040404040405, "brier": 0.4099033333333332},
+      "B1_v4": {"accuracy": 0.7, "macro_f1": 0.6969696969696969, "brier": 0.4491108333333332}
+    }
+  },
+  "pending_gold_revision": {
+    "status": "superseded-completed-six-replacements",
+    "canonical_gold_sha256": "21e3bb85b1a3c951a850de45ed95e43ab09bceab57c0b5d2c461ed893860ba22",
+    "counts": {"reliable": 17, "questionable": 21, "unreliable": 22},
+    "relabelled": {
+      "TC22": {"from": "questionable", "to": "unreliable"},
+      "TC25": {"from": "reliable", "to": "questionable"},
+      "TC27": {"from": "questionable", "to": "unreliable"},
+      "TC34": {"from": "reliable", "to": "questionable"},
+      "TC35": {"from": "reliable", "to": "questionable"}
+    },
+    "replacement_candidates": ["TC06", "TC16", "TC37"],
+    "balance_requirement": "Historical requirement, subsequently satisfied; the frozen canonical gold is 20/20/20.",
+    "decision_log": "evals/annotation/gold_followup_decisions_2026-08-30.jsonl",
+    "historical_metrics_warning": "All v6 metrics were scored against the archived prior 20/20/20 gold hash 1528e62f442e864853b8093dc20f74f15a8242a862301b0bd33a5f3f2781feee and must not be silently rescored or described as results on this pending revision."
+  },
+  "judge_v7_candidate": {
+    "status": "superseded-by-completed-v8-v9c-protocol",
+    "F_prompt_sha256": "8bc31e4cb897eef3110ec8c0229299f665a52fc0ed1f32506ded383cb5ee706e",
+    "B1_prompt_sha256": "f632d0888dab7e2bef1bd561beace9ea5d0d17adab2b1b081f390ced3200cfd2",
+    "changes": [
+      "contextual reading of ambiguous compressed wording",
+      "true-core versus false-central-conclusion counterfactual test",
+      "publication-time and headline-body rules",
+      "aggressor-state war communiques and professional propagandist doctrine",
+      "removed automatic questionable tie-break for close top-two probabilities"
+    ],
+    "run_policy": "Historical preregistration condition; retained for audit only."
+  },
+  "final_experiment": {
+    "status": "completed-2026-08-30",
+    "scope": {
+      "cases": 60,
+      "modes": ["F", "B1", "B2", "B3"],
+      "records": 240,
+      "fully_paired": true,
+      "gold_counts": {"reliable": 20, "questionable": 20, "unreliable": 20}
+    },
+    "canonical_result": {
+      "path": "evals/results/ablation_60.jsonl",
+      "sha256": "ac0dcc42f5ec6c29b21cc7db231c8d36df2c45f88f581bfdfa505cd1361bac52"
+    },
+    "analysis": {
+      "path": "evals/results/ablation_analysis.json",
+      "metrics_path": "evals/results/ablation_metrics.json",
+      "F": {"accuracy": 0.9, "macro_f1": 0.9019, "brier": 0.1955},
+      "B1": {"accuracy": 0.85, "macro_f1": 0.8517, "brier": 0.2427},
+      "B2": {"accuracy": 0.8333, "macro_f1": 0.8332, "brier": 0.2543},
+      "B3": {"accuracy": 0.4167, "macro_f1": 0.3111, "brier": 0.7066}
+    },
+    "judge_prompt_sha256": {
+      "F": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d",
+      "B1": "69704eb59488f554778473be2b9b29a263d17959dbab21875864ed7f9b855d6d",
+      "B2": "00fc3f236e9ea6bec8ad759096cd6c50814c91cc66b75de4bff54e899821196f",
+      "B3": "ca3177583e99aae8285c11b945e0716478b2275419e36342231ca7ceb3bd154d"
+    },
+    "provenance_audit": "evals/results/final_provenance_audit.json",
+    "current_context_audit": "evals/results/current_context_audit.json",
+    "checkpoint_restarts_are_separate_experiments": false,
+    "new_judge_robustness_experiments_required": false
+  },
+  "status": "completed-final-ablation-60x4",
+  "search_transcript_sha256": null,
+  "code_commit": "bf0f7d9c628360149cfa363cad22f77062ec0b95",
+  "thresholds": {
+    "ai_generated": 0.5,
+    "clickbait": 0.7148534923067267,
+    "jeansa": 0.6,
+    "mt_translation": 0.5
+  },
+  "notes": "B3 disables web search. The canonical final experiment is the fully paired 60-case by four-mode artifact in evals/results/ablation_60.jsonl. Intermediate v4, v6, v7 and v8 records are retained as audit history and must not replace the final metrics. Checkpoint resumptions reduced token cost and are counted only as execution mechanics within the single planned corpus run, not as additional experiments. Judge robustness to adversarial or paraphrased inputs is not claimed and no new experiment is required."
+}

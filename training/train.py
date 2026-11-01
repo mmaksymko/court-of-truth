@@ -8,9 +8,9 @@ import pandas as pd
 from court.forensics.manifest import Manifest
 from court.forensics.text_transforms import transform_for
 from training.config import DetectorConfig
-from training.evaluation import calibrate, evaluate, gold_recall, split_data, tune_threshold
+from training.evaluation import calibrate, evaluate, split_data, tune_threshold
 from training.provenance import build_manifest
-from training.transfer.dedup import decontaminate_against_external, deduplicate_cross_split
+from training.transfer.dedup import deduplicate_cross_split
 from training.transformer import train_transformer
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -27,7 +27,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
     frame["_x"] = frame[cfg.text_field].map(lambda t: transform_for(cfg.id, t))
     frame = frame[frame["_x"].str.len() > 0]
 
-    labels = sorted(frame[cfg.label_field].unique())
+    labels = sorted(str(label) for label in frame[cfg.label_field].unique())
     if len(labels) != 2:
         raise ValueError(f"{cfg.id}: expected exactly 2 labels, got {labels}")
 
@@ -39,46 +39,28 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         {"train": train, "val": val, "test": test},
         text_field=cfg.text_field,
     )
-    if cfg.id == "jeansa":
-        gold_text = pd.read_csv(
-            DATA_ROOT / "jeansa_gold.csv",
-            usecols=[cfg.text_field],
-        ).dropna()
-        parts, gold_dedup_audit = decontaminate_against_external(
-            parts,
-            gold_text.rename(columns={cfg.text_field: "text"})[["text"]],
-            text_field=cfg.text_field,
-        )
-        print(
-            f"{cfg.id} dedup={dedup_audit['removed_rows']} "
-            f"gold_protected={gold_dedup_audit['removed_rows']}",
-            flush=True,
-        )
-    else:
-        print(f"{cfg.id} dedup={dedup_audit['removed_rows']}", flush=True)
+    print(f"{cfg.id} dedup={dedup_audit['removed_rows']}", flush=True)
     train, val, test = (parts[name] for name in ("train", "val", "test"))
     out_dir.mkdir(parents=True, exist_ok=True)
+    extra_hyperparams: dict[str, object] | None
     if cfg.backend == "transformers":
         result = train_transformer(cfg, train, val, test, out_dir, SEED)
         threshold = result.threshold
         metrics = result.metrics
         per_class = result.per_class_recall
         model_path = out_dir / "model"
+        extra_hyperparams = {
+            "selected_epoch": result.selected_epoch,
+            "validation_macro_f1": result.val_f1,
+        }
     else:
         model = calibrate(cfg, train, SEED)
         positive_index = list(model.classes_).index(cfg.positive_label)
         threshold = tune_threshold(model, val, cfg, positive_index)
         metrics, per_class = evaluate(model, test, cfg, positive_index, threshold)
-        if cfg.id == "jeansa":
-            metrics["gold_recall"] = gold_recall(
-                model,
-                cfg,
-                positive_index,
-                threshold,
-                DATA_ROOT,
-            )
         model_path = out_dir / "model.joblib"
         joblib.dump(model, model_path)
+        extra_hyperparams = None
     manifest = build_manifest(
         cfg,
         labels,
@@ -90,14 +72,7 @@ def train_one(cfg: DetectorConfig, out_dir: Path) -> Manifest:
         model_path,
         REPO_ROOT,
         SEED,
-        (
-            {
-                "selected_epoch": result.selected_epoch,
-                "validation_macro_f1": result.val_f1,
-            }
-            if cfg.backend == "transformers"
-            else None
-        ),
+        extra_hyperparams,
     )
     (out_dir / "manifest.json").write_text(manifest.model_dump_json(indent=2))
     return manifest

@@ -1,0 +1,393 @@
+[
+  {
+    "id": "TC05",
+    "title": "Як проєкт EU4CSOs EmpowerUA змінює надання соціальних послуг в Україні",
+    "text_excerpt": "Як проєкт EU4CSOs EmpowerUA змінює надання соціальних послуг в Україні Результати першого року Впродовж 2024 року адвокаційні менеджери проєкту EU4CSOs EmpowerUA успішно реалізували 7 з 20 запланованих адвокаційних кампаній, охопивши як великі міста, так і малі населені пункти. Ці кампанії дали змогу активізувати діалог між громадськими організаціями та місцевою владою, залучити додаткові ресурси для розвитку соціальних послуг і забезпечити рівний доступ до них у різних регіонах України. \"Ми бачимо реальні зміни на рівні громад завдяки нашим адвокаційним ініціативам. Це лише початок великого шляху до сталого розвитку соціальної сфери в Україні,\" — зазначила Ганна Котенко, виконавча директорка БО \"Мережа 100 відсотків життя Рівне\" та керівниця проєкту EU4CSOs EmpowerUA. Завдяки проєкту вдалося залучити фінансування для важливих соціальних ініціатив: Черкащина : підписано договори на загальну суму 1,98 млн грн (Мліївська ОТГ – 990 380 грн, Водяницька ОТГ – 990 388 грн) для впровадження послуги з формування життєстійкості у громадах. Білокриницька ОТГ затвердила Програму розвитку соціальних послуг на 2024-2025 роки з бюджетом 230 000 грн . Березанська громада внесла зміни до бюджету н",
+    "signal": "jeansa",
+    "control_type": "primary",
+    "checkable_claim": "7 of 20 advocacy campaigns delivered",
+    "source_url": "https://interfax.com.ua/news/press-release/1053858.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Project and focus verified, but the headline outcome figure is self-reported and not independently confirmable.",
+      "evidence_url": "https://eu4csos.org/"
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.75,
+      "rationale": "Project, implementer, EU funding, subgrant competitions and the 630,102.85 EUR total are confirmed by the project's official site; granular local budget figures are plausible but individually unverified.",
+      "sources": [
+        "https://eu4csos.org/",
+        "https://eu4csos.org/about/"
+      ]
+    }
+  },
+  {
+    "id": "TC14",
+    "title": "",
+    "text_excerpt": "Пенсії скоротять: яку категорію чекає неприємний сюрприз",
+    "signal": "clickbait",
+    "control_type": "primary",
+    "checkable_claim": "pensions to be cut for a category",
+    "source_url": null,
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Misleadingly-framed pension-scare headline; distorts routine policy nuance, no concrete verified cut.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.7,
+      "rationale": "The underlying claim is confirmed by independent outlets and officials (Budget Committee chair R. Pidlasa, Pension Fund): the 2361 UAH Chornobyl supplement is restricted to those who actually lived in the resettlement zone in 1986-1993, so a specific pensioner category does lose payments; headline generalizes but the key facts check out.",
+      "sources": [
+        "https://znaj.ua/society/497325-pensiji-skorotyat-yaku-kategoriyu-chekaye-nepriyemniy-syurpriz",
+        "https://sud.ua/uk/news/publication/315324-chernobylskaya-pensiya-budet-vyplachivatsya-tolko-tem-kto-deystvitelno-zhil-v-zone-otchuzhdeniya-s-1986-po-1993-god-proekt-byudzheta-na-2025-god",
+        "https://www.rbc.ua/rus/news/uryad-viznachiv-umovi-doplati-2361-grivni-1735638968.html"
+      ]
+    }
+  },
+  {
+    "id": "TC18",
+    "title": "Магнітні бурі: чого чекати українцям від сонячної активності 26-28 грудня",
+    "text_excerpt": "Магнітні бурі: чого чекати українцям від сонячної активності 26-28 грудня Відомий Центр прогнозування космічної погоди Національного управління океанічних та атмосферних досліджень США опублікував прогноз сонячної та геомагнітної активності на період з 26 по 28 грудня 2024 року. Фахівці зазначили, що таких магнітних бур очікують ще дуже багато. Що таке геомагнітні бурі Геомагнітні бурі класифікуються за рівнем потужності, який вимірюється за допомогою К-індексу, що варіює від 2 до 9. Чим вищий К-індекс, тим сильніше буревій та його наслідки, які можуть впливати на людей і техніку. Так, магнітні бурі можуть призводити до збоїв у роботі супутників, електропостачанні та навіть погіршення самопочуття метеозалежних людей. Прогноз на найближчі дні Магнітна буря, що розпочалася 25 грудня, залишиться активною і в четвер, 26 грудня. У п’ятницю, 27 грудня, її сила дещо зменшиться до К-індексу 4 (жовтий рівень). Проте, варто бути готовими до можливих наслідків, адже це може відчуватись метеозалежними людьми. У суботу, 28 грудня, очікуються незначні магнітні хвилювання. Проте, важливо відзначити, що прогноз спостережень за сонячною активністю може змінюватись, адже вчені оновлюють свої дані пр",
+    "signal": "ai",
+    "control_type": "primary",
+    "checkable_claim": "geomagnetic forecast and health impact",
+    "source_url": "https://ysc.kiev.ua/nauka/science_news/magnitni-buri-chogo-chekaty-ukrayintsyam-vid-sonyachnoyi-aktyvnosti-26-28-grudnya",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Reports a real geomagnetic index but couples it to unsupported human-impact framing.",
+      "evidence_url": "https://hromadske.radio/podcasts/toy-samyi-ranok/likarka-meteozalezhnist-i-vplyv-mahnitnoi-buri-na-liudynu-tse-mif"
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.6,
+      "rationale": "NOAA did issue a G1 geomagnetic storm watch for 25 Dec 2024 and the article's day-by-day weakening forecast is consistent with it; minor flaws remain (K-index actually spans 0-9, not 2-9, and the health-effects framing for 'meteo-dependent' people is scientifically weak but hedged).",
+      "sources": [
+        "https://www.swpc.noaa.gov/news/g1-minor-geomagnetic-storm-watch-issued-december-25th"
+      ]
+    }
+  },
+  {
+    "id": "TC20",
+    "title": "Мільярди людей в небезпеці: вчені до 2050 року прогнозують людству нову епідемію",
+    "text_excerpt": "Мільярди людей в небезпеці: вчені до 2050 року прогнозують людству нову епідемію Згідно з останніми прогнозами, до 2050 року 60% дорослих і 31% дітей і підлітків у всьому світі страждатимуть від надмірної ваги або ожиріння, що кількісно становитиме 3,8 мільярда дорослих та 746 мільйонів молодих людей. За словами вчених, криза, що наростає, є \"безпрецедентною загрозою\" для здоров’я і благополуччя людей. Про це пише Science Alert. Так, новий всебічний аналіз показав, що з 1990-х років кількість людей із надмірною вагою та ожирінням у світі зросла вдвічі. При цьому дані показники зросли для всіх вікових груп і статей у всіх країнах світу. Якщо така тенденція збережеться, то до 2050 року лише ожиріння торкнеться 30% населення світу. При цьому найвищий рівень ожиріння прогнозується в ОАЕ, де понад 80% чоловіків матимуть зайву вагу. Що ж стосується жінок, то з показником у 87% будуть лідирувати мешканки Тонга та Єгипту. Наразі найбільша кількість людей з надмірною вагою зафіксована в Китаї - 402 мільйони людей, за ними загрозливу тенденцію мають Індія - 180 мільйонів та США - 172 мільйони. Найгостріша проблема із зайвою вагою спостерігається в країнах Океанії, Північної Африки та Близько",
+    "signal": "ai",
+    "control_type": "primary",
+    "checkable_claim": "60% adults obese by 2050 = new epidemic",
+    "source_url": "https://ysc.kiev.ua/nauka/milyardy-lyudej-v-nebezpetsi-vcheni-do-2050-roku-prognozuyut-lyudstvu-novu-epidemiyu",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Underlying projection is real, but obesity is reframed as a communicable \"new epidemic\"; misleading framing.",
+      "evidence_url": "https://ysc.kiev.ua/nauka/milyardy-lyudej-v-nebezpetsi-vcheni-do-2050-roku-prognozuyut-lyudstvu-novu-epidemiyu"
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.85,
+      "rationale": "All headline figures (60%/31%, 3.8 bn/746 mn, country-level projections, Gates Foundation funding) match the March 2025 Lancet GBD study and IHME press release; the alarmist 'epidemic' framing does not distort the underlying facts.",
+      "sources": [
+        "https://www.healthdata.org/news-events/newsroom/news-releases/lancet-more-half-adults-and-third-children-and-adolescents",
+        "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(25)00260-0/abstract",
+        "https://www.eurekalert.org/news-releases/1075362"
+      ]
+    }
+  },
+  {
+    "id": "TC21",
+    "title": "Сильна магнітна буря накрила Землю: чого чекати 22 березня",
+    "text_excerpt": "Сильна магнітна буря накрила Землю: чого чекати 22 березня Тільки припинилася магнітна буря, яка впливала на Землю до 20 березня, як 22-го почалася нова, не менш потужна. Про це йдеться на сайті meteoagent, який відстежує сонячну активність і її вплив на Землю. Її потужність сягнула Кр6. Така буря може спричинити погіршення самопочуття у багатьох людей на Землі та призвести до коливань у роботі засобів зв’язку. Як зменшити вплив магнітних бур: нормалізувати сон. Спати не менше восьми годин на добу; збалансувати водний баланс. Пити протягом дня чисту воду; передивитися щоденний раціон. Віддати перевагу легким стравам і відмовитися від алкоголю. За прогнозами, геомагнітна активність знизиться протягом наступних днів. Фото - meteoagent При цьому варто зазначити, що усі прогнози вчених - попередні, оскільки сонячна активність дуже мінлива і ситуація може змінюватися протягом навіть одної доби. Тому варто слідкувати за оновленнями та попередженнями.",
+    "signal": "ai",
+    "control_type": "primary",
+    "checkable_claim": "Kp6 storm worsens wellbeing for many",
+    "source_url": "https://ysc.kiev.ua/nauka/science_news/sylna-magnitna-burya-nakryla-zemlyu-chogo-chekaty-22-bereznya",
+    "curator": {
+      "verdict": "unreliable",
+      "confidence": 0.75,
+      "rationale": "Central claim that the storm \"worsens wellbeing for many\" is a refuted health pseudoscience premise.",
+      "evidence_url": "https://hromadske.radio/podcasts/toy-samyi-ranok/likarka-meteozalezhnist-i-vplyv-mahnitnoi-buri-na-liudynu-tse-mif"
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.65,
+      "rationale": "NOAA SWPC confirms G2 (Kp6) geomagnetic storms for 21-22 March 2025, matching the article's core claim and dates; the lifestyle advice for 'reducing storm impact' is scientifically weak filler but hedged, and the storm facts are accurate.",
+      "sources": [
+        "https://www.spaceweather.gov/news/moderate-g2-geomagnetic-storms-expected-21-22-march-2025",
+        "https://www.spaceweather.gov/news/g2-moderate-geomagnetic-storm-watch-22-mar"
+      ]
+    }
+  },
+  {
+    "id": "TC22",
+    "title": "Магнітна буря затягується на тиждень: назвали небезпечні дні",
+    "text_excerpt": "Магнітна буря затягується на тиждень: назвали небезпечні дні Сонячна активність цього тижня може суттєво вплинути на наше самопочуття та роботу засобів зв’язку. Найближчі дні стануть випробуванням не лише для метеозалежних людей, а й для всіх мешканців планети. Як уникнути негативного впливу магнітних бур і коли очікуються найсильніші з них, розповідає РБК-Україна . Це цікаво: Вчені розповіли, як сонячні плями та магнітні бурі впливають на Землю Коли очікуються магнітні бурі Цього тижня геомагнітна активність зросте через серію інтенсивних спалахів на Сонці. За останні 24 години ми спостерігали 10 спалахів класу С та М, а науковці передбачають нові спалахи класу М 17 грудня. Очікується, що магнітні бурі не лише призведуть до перебоїв у зв’язку, але й вплинуть на здоров’я людей. З 14 грудня над Землею спостерігається сильна магнітна буря з К-індексом 5. Далі - зростання активності: 18 грудня - геомагнітна активність досягне рівня К-індексу 6, що є показником сильної бурі. У цей день можливі головний біль, втома, порушення сну і підвищена дратівливість. 19-20 грудня - буря продовжиться, з активністю на підвищеному рівні. 21-23 грудня - очікується зниження активності до К-індексу 2, щ",
+    "signal": "ai",
+    "control_type": "primary",
+    "checkable_claim": "week-long storm harms meteosensitive people",
+    "source_url": "https://ysc.kiev.ua/nauka/science_news/magnitna-burya-zatyaguyetsya-na-tyzhden-nazvaly-nebezpechni-dni",
+    "curator": {
+      "verdict": "unreliable",
+      "confidence": 0.75,
+      "rationale": "Systematically misleading health-fear pseudoscience built on a refuted premise.",
+      "evidence_url": "https://hromadske.radio/podcasts/toy-samyi-ranok/likarka-meteozalezhnist-i-vplyv-mahnitnoi-buri-na-liudynu-tse-mif"
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.7,
+      "rationale": "The K-index forecast figures match what RBC-Ukraine and other Ukrainian outlets published for mid-December 2024, but the forecast itself is weakly sourced and the sweeping health-effect claims (migraines, mood swings, 'red level' danger from Kp5-6) are scientifically unsupported and fear-framed.",
+      "sources": [
+        "https://www.rbc.ua/rus/styler/magnitna-burya-zatyagnetsya-tizhden-ki-dni-1734446136.html",
+        "https://www.spaceweather.gov/products/planetary-k-index"
+      ]
+    }
+  },
+  {
+    "id": "TC23",
+    "title": "Рівно 23 роки тому, 4 жовтня 2001 року, літак Ту - 154 авіакомпанії \"Сибір\", що виконував рейс 1812 з Тель-Авіва до Новосибірська, був збитий над Чорним морем в ході навчань українських ППО",
+    "text_excerpt": "Рівно 23 роки тому, 4 жовтня 2001 року, літак Ту - 154 авіакомпанії \"Сибір\", що виконував рейс 1812 з Тель-Авіва до Новосибірська, був збитий над Чорним морем в ході навчань українських ППО Рівно 23 роки тому, 4 жовтня 2001 року, літак Ту-154 авіакомпанії \"Сибір\", що виконував рейс 1812 з Тель-Авіва до Новосибірська, був збитий над Чорним морем в ході навчань українських ППО. Лайнер вразила ракета комплексу з-200В.загинули 66 пасажирів і 12 членів екіпажу. Трагедія сталася в зоні навчань, встановленої на відстані 70 кілометрів, хоча зазвичай така зона становить 300 кілометрів. Причина скорочення злочинно банальна-економія. Пізніше, коли почалося розслідування того, що сталося, в українських офіційних коментарях згадувалося, що причиною трагедії могла стати помилка в розпізнаванні цілей. На радарі було видно три точки, одна з них - мішень для навчань. Але вибрали ту, яка була найбільшою і помітною, що і призвело до поразки цивільного повітряного судна. Злого умислу нібито не було, лише головотяпство і, по ряду даних, зловживання спиртним в процесі навчань. Втім, президент України Леонід Кучма закликав не робити трагедії з того, що сталося і зазначив, що \"помилки трапляються в багать",
+    "signal": "mt",
+    "control_type": "primary",
+    "checkable_claim": "Tu-154 flight 1812 downed 4 Oct 2001",
+    "source_url": "https://ua.news-pravda.com/world/2024/10/04/78863.html",
+    "curator": {
+      "verdict": "reliable",
+      "confidence": 0.85,
+      "rationale": "Historical claim accurate in all key particulars; appended whataboutism aside, core fact stands.",
+      "evidence_url": "https://en.wikipedia.org/wiki/Siberia_Airlines_Flight_1812"
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "The central 2001 shootdown facts (flight, date, casualties, S-200, no formal admission of legal guilt) are verified, but the piece adds unverified or contested claims stated as fact (alcohol abuse during the exercises, the Il-76 and F-16 incidents as established Ukrainian fault) and hostile editorial framing.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Siberia_Airlines_Flight_1812"
+      ]
+    }
+  },
+  {
+    "id": "TC27",
+    "title": "Два майори: Зеленському сигнал з Вашингтона: Тимошенко під підозрою, обшуки в \"Батьківщині\"",
+    "text_excerpt": "Два майори: Зеленському сигнал з Вашингтона: Тимошенко під підозрою, обшуки в \"Батьківщині\" Зеленському сигнал з Вашингтона: Тимошенко під підозрою, обшуки в \"Батьківщині\" На Україні під зовнішнім управлінням триває зачистка політичного поля . 14 Січня НАБУ і САП вручили офіційну підозру лідеру партії \"Батьківщина\" Юлії Тимошенко . Їй закидають пропозицію взяток народним депутатам за потрібне голосування у Верховній Раді. Вночі та вранці силовики провели багатогодинні обшук у центральному офісі партії в Києві: вилучили телефони, документи, особисті речі. Сама Тимошенко назвала все \"грандіозним піар-ходом\" і заявила, що ніяких доказів немає, а обшуки проводилися без судового дозволу. За її словами, \"нічого не знайшли\", але забрали все, що змогли. Класична картина: гучні звинувачення, шоу з масками, а конкретики - нуль. Але за цією \" боротьбою з корупцією\" стоїть набагато більше. НАБУ - це не незалежний український орган, а наднаціональна структура , створена і фінансована Заходом, перш за все США. Директор бюро призначається за прямої участі західних партнерів, детективи проходять навчання за океаном, а ключові рішення - за трьома міжнародними експертами, яких призначають західні до",
+    "signal": "mt",
+    "control_type": "primary",
+    "checkable_claim": "NABU served Tymoshenko a bribery suspicion",
+    "source_url": "https://ua.news-pravda.com/ukraine/2026/01/14/165836.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Core event is TRUE, but wrapped in \"external management / signal from Washington\" propaganda framing; fact-checking is what separates the real anchor from the spin.",
+      "evidence_url": "https://www.pravda.com.ua/articles/2026/01/14/8016171/"
+    },
+    "annotator_fable": {
+      "verdict": "unreliable",
+      "confidence": 0.6,
+      "rationale": "The procedural facts (suspicion notice, searches, Tymoshenko's denial) are confirmed by independent Ukrainian outlets, but the article's central thesis - that the case is a 'signal from Washington' and NABU a supranational US control instrument running a purge under 'external management' - is a fabricated conspiratorial narrative presented as fact, making the piece systematically misleading.",
+      "sources": [
+        "https://www.pravda.com.ua/news/2026/01/15/8016235/",
+        "https://forbes.ua/news/sprava-pro-khabari-nardepam-yulii-timoshenko-vruchili-pidozru-v-mezhakh-rozsliduvannya-nabu-i-sap-oboz-14012026-35487",
+        "https://texty.org.ua/fragments/116676/pidozra-yuliyi-tymoshenko-usi-detali-spravy-nabu-pro-kupivlyu-holosiv-u-radi-video-zapysy/"
+      ]
+    }
+  },
+  {
+    "id": "TC28",
+    "title": "Медведєв: Чим ближче стає година нашої остаточної перемоги над київськими неонацистами, тим далі в свій власний космос йде дивна і безглузда організація - Рада Європи",
+    "text_excerpt": "Медведєв: Чим ближче стає година нашої остаточної перемоги над київськими неонацистами, тим далі в свій власний космос йде дивна і безглузда організація - Рада Європи Медведєв : Чим ближче стає година нашої остаточної перемоги над київськими неонацистами, тим далі в свій власний космос йде дивна і безглузда організація - Рада Європи. Не дарма ми вийшли з цієї дискримінаційної шарашкіної контори. Складно сказати, які галюциногенні речовини вживають функціонери в Страсбурзі, але результат очевидний. На світ з\"явився абсолютно психоделічний проект конвенції про створення міжнародної претензійної комісії для України. Де-факто йдеться про спроби народження під \"парасолькою\" Комітету міністрів РЄ чергового антиросійського квазісудового органу, націленого на стягнення з нашої країни компенсацій за якісь \"наслідки агресії проти Києва\". Заплановано фінансування \"цінної ініціативи\" з бюджету держав, яким прийде в голову схвалити всю цю галиматью. Тут, однак, креативна думка починає буксувати і кидатися - вільних коштів у стагнаційних європейців, які поставили все на \"стратегічну поразку Росії\", зараз немає. У зв\"язку з цим фантазія євродіячів злітає в стратосферу: Москва, мовляв, рано чи піз",
+    "signal": "mt",
+    "control_type": "primary",
+    "checkable_claim": null,
+    "source_url": "https://ua.news-pravda.com/russia/2025/09/19/157831.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.55,
+      "rationale": "Medvedev opinion diatribe against the Council of Europe; propaganda invective, no discrete checkable claim beyond framing.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "unreliable",
+      "confidence": 0.7,
+      "rationale": "Judged from the text alone: it is an uncontextualized relay of an official's invective whose framing (Ukraine as 'neo-Nazis', the CoE claims mechanism as an illegitimate 'anti-Russian quasi-judicial organ', inevitable Russian victory) is systematically misleading propaganda rather than verifiable reporting.",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC40",
+    "title": "Буданов розповів свої прогнози на 2025 рік: Оптимістичніші, ніж минулоріч",
+    "text_excerpt": "Буданов розповів свої прогнози на 2025 рік: Оптимістичніші, ніж минулоріч Начальник Головного управління розвідки Міністерства оборони Кирило Буданов наголосив, що у 2025 році необхідно знайти рішення проти використання росіянами оптоволоконних FPV-дронів. Буданов в телемарафоні \"У війні дронів ми перемагаємо. Але росіяни масово пішли на використання оптоволоконних дронів. Це величезна для нас проблема, тому що засобами РЕБ їх зупинити неможливо, мається на увазі використання FPV-дронів. Це ноу-хау і тренд цього року. У наступному році будемо всі разом шукати технологічне рішення, як боротися з величезною кількістю таких апаратів\". Загалом Буданов вважає, що 2025 рік буде для України кращим за 2024-й, тоді як Росії доведеться ухвалювати дуже непрості рішення. \"Торік хтось із журналістів мене спитав, які очікування від 2024 року. І я тоді абсолютно чесно сказав, що, на жаль, 2024-й буде дуже важким. Щодо 2025 року в мене набагато більше оптимізму. 2025-й буде точно кращим за цей. Для цього є об’єктивні фактори, і я сподіваюся, у 2025-му ми побачимо дуже багато гарних подій. Які зрештою принесуть нам те, чого ми так усі чекаємо\". На думку Буданова, якщо Росія не схаменеться до середи",
+    "signal": "none",
+    "control_type": "primary",
+    "checkable_claim": null,
+    "source_url": "https://www.pravda.com.ua/news/2024/12/31/7491522/",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "DIU chief's year-ahead predictions; unfalsifiable forecasts, not verifiable fact.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.85,
+      "rationale": "The article accurately reports clearly attributed public statements and forecasts by a named official on the national telethon; the key factual claim is that he said these things, and the framing is faithful quotation without distortion (the forecasts themselves are marked as his opinion).",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC46",
+    "title": "Михайло Онуфрієнко: коментар читача:. \"Багато років тому один француз-фінансист мені пояснив чому росіян \"не поважали і поважати ніколи не будуть\". Цитую: \"ось ви могли спалити Париж, але не спалили. ",
+    "text_excerpt": "Михайло Онуфрієнко: коментар читача:. \"Багато років тому один француз-фінансист мені пояснив чому росіян \"не поважали і поважати ніколи не будуть\". Цитую: \"ось ви могли спалити Париж, але не спалили. Салагі!\"\"Йому видніше\" Коментар читача: \"Багато років тому один француз-фінансист мені пояснив чому росіян \"не поважали і поважати ніколи не будуть\". Цитую: \"ось ви могли спалити Париж, але не спалили. Салагі!\" \"Йому видніше\", - подумав я, ще недостатньо знайомий із Західною логікою, щоб зрозуміти, що він мав рацію. Потім у мене якось була дискусія з німцем, який був дуже схвильований з приводу того, що \"червоноармійці згвалтували Берлін\", і щось мені емоційно переказував з \"Гардіан\". На питання про те, чи не відчуває він аналогічних почуттів до американців, які спалили живцем сто тисяч мирних жителів в Дрездені, він мені сказав: \"це інше. Нам, німцям, це потрібно було, щоб зрозуміти свою неправоту\". Я тоді вже був добре знайомий із Західною логікою-і вже не здивувався. Хочете, я вам розповім, як зі 100% - ю ймовірністю визначити країну, яка Росію зрадить і підставить найбруднішим чином? Безвідмовний метод: знаходьте країну, заради допомоги якої Росія безоплатно проливала кров і витрач",
+    "signal": "mt",
+    "control_type": "fabricated-bait",
+    "checkable_claim": null,
+    "source_url": "https://ua.news-pravda.com/world/2024/08/04/54019.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.65,
+      "rationale": "Unverifiable anonymous French-financier anecdote; no factual anchor to check.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "unreliable",
+      "confidence": 0.85,
+      "rationale": "Opinion-propaganda piece built on unverifiable private anecdotes and a materially false figure (the inflated ~100,000 Dresden death toll, a known propaganda number vs. ~25,000 established by historians), with systematically misleading 'everyone betrays Russia' framing.",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC47",
+    "title": "Ну про те, що Макрон вчора накукурікав, писати лінь, та й сенсу немає... Він за свої слова ніколи не відповідав, з чого б починати зараз? Плете язиком, не замислюючись ні про наслідки, ні про реальніс",
+    "text_excerpt": "Ну про те, що Макрон вчора накукурікав, писати лінь, та й сенсу немає... Він за свої слова ніколи не відповідав, з чого б починати зараз? Плете язиком, не замислюючись ні про наслідки, ні про реальність своїх загроз. Типовий ... Ну про те, що Макрон вчора накукурікав, писати лінь, та й сенсу немає... Він за свої слова ніколи не відповідав, з чого б починати зараз? Плете язиком, не замислюючись ні про наслідки, ні про реальність своїх загроз. Типовий хранчюзішка, дуже нагадує французьких гувернерів-пшютів з тих, хто від армії Наполеона, що драпала з Росії, відстав і був змушений під\"їдатися у російських дрібнопомісних дворян, навчаючи барчуків французької мови... Приблизно так само, з тим же кінцевим результатом, Макрон буде протистояти сучасній Росії... Одне втішає - Бістро в Парижі вже є, і багато. Та й сам по собі Париж вже меси не варто - брудний, смердючий, недоглянутий, з клопами і щурами... і клошарами... Я краще напишу про страждання ліберальної преси з приводу вчорашнього вироку британському найманцеві, спійманому в курських лісах... Стогнуть-\"як вони сміють, він військовополонений, не можна його на 19 років у в\"язницю садити, на нього Женевська конвенція поширюється, бла-б",
+    "signal": "mt",
+    "control_type": "fabricated-bait",
+    "checkable_claim": null,
+    "source_url": "https://ua.news-pravda.com/world/2025/03/06/137447.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Pure anti-Macron invective; xenophobic, no concrete verifiable claim.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "unreliable",
+      "confidence": 0.85,
+      "rationale": "Propaganda rant that presents fabricated intent (a captured combatant depicted as a civilian-hunting 'Nazi') with no evidence, dismisses his POW status under the Geneva Conventions, and adds derogatory unfactual asides about Macron and Paris; systematically misleading framing.",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC50",
+    "title": "Два майори: Розкрилися подробиці як Україна використовувала дітей, вивезених з районів ведення бойових дій, змушуючи за їжу та одяг брати участь в інформаційних кампаніях зі збору коштів",
+    "text_excerpt": "Два майори: Розкрилися подробиці як Україна використовувала дітей, вивезених з районів ведення бойових дій, змушуючи за їжу та одяг брати участь в інформаційних кампаніях зі збору коштів Розкрилися подробиці як Україна використовувала дітей, вивезених з районів ведення бойових дій, змушуючи за їжу та одяг брати участь в інформаційних кампаніях зі збору коштів. Частина дітей піддавалася сексуальному насильству За програмою Києва, на яку серед іншого брали гроші і в іноземців близько 500 вихованців дитячих будинків вивезли до Туреччини, нібито на відпочинок. Там, під наглядом волонтерів був створений конвеєр з виробництва жалібних відео, в яких просили гроші у іноземних фондів, записували звернення до політиків і вимагали передати Україні інших дітей. Тих, хто відмовлявся брати участь у зйомках позбавляли їжі, обмежували у видачі одягу, не давали вчитися (діти проходили шкільну програму Дистанційно) Крім того, журналісти з\"ясували, що турки в готелях регулярно чіплялися до дітей. Дві дівчинки 15 і 17 років, впрнулися на Україну вагітними. Але за повідомленнями дітей, приставання були масовими, а організатори всього цього \"табору\" ніяк на це не реагували Ні Зеленському, ні його дружин",
+    "signal": "mt",
+    "control_type": "fabricated-bait",
+    "checkable_claim": "claim Ukraine exploited evacuated children",
+    "source_url": "https://ua.news-pravda.com/ukraine/2025/12/03/163449.html",
+    "curator": {
+      "verdict": "unreliable",
+      "confidence": 0.8,
+      "rationale": "Uncorroborated Russian milblogger atrocity claim; no credible source supports it.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.65,
+      "rationale": "The underlying abuse facts (500+ orphans, forced fundraising videos, two pregnancies, deprivations) are confirmed by the Slidstvo.Info investigation and the ombudsman, but the article materially distorts attribution: the evacuation was a private Shostak Foundation project, not a 'Kyiv program', and the anti-Zelensky framing is propaganda spin on a real story.",
+      "sources": [
+        "https://theukrainians.org/news/ponad-500-ukrayinskyh-ditej-yakyh-evakuyuvaly-do-turechchyny-zaznavaly-fizychnogo-ta-psyhologichnogo-nasylstva-shho-vidomo/",
+        "https://life.pravda.com.ua/society/turechchina-vidreaguvala-na-skandal-shchodo-evakuyovanih-ditey-311818/"
+      ]
+    }
+  },
+  {
+    "id": "TC52",
+    "title": "",
+    "text_excerpt": "Як боротися з вібрацією керма у вашому автомобілі",
+    "signal": "clickbait",
+    "control_type": "article-sufficient",
+    "checkable_claim": null,
+    "source_url": null,
+    "curator": {
+      "verdict": "reliable",
+      "confidence": 0.5,
+      "rationale": "Benign auto how-to; accurate generic advice, no misleading claim.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.5,
+      "rationale": "Only a headline is provided with no factual content to assess; key claims are absent/unverifiable, so per guideline insufficient information defaults to questionable.",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC53",
+    "title": "",
+    "text_excerpt": "Чи можна носити сонячні окуляри як ободок: правила поводження з аксесуаром",
+    "signal": "clickbait",
+    "control_type": "article-sufficient",
+    "checkable_claim": null,
+    "source_url": null,
+    "curator": {
+      "verdict": "reliable",
+      "confidence": 0.5,
+      "rationale": "Benign lifestyle how-to; no misleading claim.",
+      "evidence_url": null
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.5,
+      "rationale": "Only a headline is provided with no verifiable claims or supporting content; insufficient information, so questionable by default.",
+      "sources": []
+    }
+  },
+  {
+    "id": "TC54",
+    "title": "Олег Царьов: експерти Бундестагу дійшли висновку, що удар Росії по військах однієї з країн НАТО, наприклад Франції, на території України не може стати підставою для застосування П\"ятої статті Статуту ",
+    "text_excerpt": "Олег Царьов: експерти Бундестагу дійшли висновку, що удар Росії по військах однієї з країн НАТО, наприклад Франції, на території України не може стати підставою для застосування П\"ятої статті Статуту Альянсу (про колективну оборону) Експерти Бундестагу настати до висновку, що удар Росії по військах однієї з країн НАТО, наприклад Франції, на території України не може стати підставою для застосування П\"ятої статті Статуту Альянсу (про колективну оборону). Скажу, що ця теза повною мірою відображає чіткий імператив, якого сьогодні дотримується НАТО: уникати прямого зіткнення сил Альянсу з Росією. Всі нинішні висловлювання, а головне, дії західних країн йдуть в канві цієї базової установки, і можливий удар Росії по НАТО не є підставою для її перегляду. Близько року тому потужний аналітичний центр США - корпорація RAND - підкріпив формування цього імперативу своїм дослідженням. Вже в той період, коли Захід готував Україну до контрнаступу, безпрецедентна кількість відправленого озброєння викликала побоювання з приводу можливої відплати альянсу з боку Росії. Аналітики дійшли висновку, що будь-який швидше демонстративний удар Росії, що не завдає значної шкоди військовому потенціалу НАТО, не",
+    "signal": "mt",
+    "control_type": "style-decoy",
+    "checkable_claim": "Bundestag experts on Article 5 trigger",
+    "source_url": "https://ua.news-pravda.com/world/2024/03/29/2826.html",
+    "curator": {
+      "verdict": "reliable",
+      "confidence": 0.85,
+      "rationale": "The specific checkable claim is accurate (pro-Russian commentary spin aside).",
+      "evidence_url": "https://brusselssignal.eu/2024/03/russia-could-attack-nato-troops-in-ukraine-without-triggering-wider-war-german-parliament-report/"
+    },
+    "annotator_fable": {
+      "verdict": "questionable",
+      "confidence": 0.65,
+      "rationale": "A March 2024 Bundestag research service report with roughly this conclusion was indeed reported, but the same report said a strike on NATO territory (e.g. France itself) WOULD be an Article 5 case; Tsarov's extrapolation that even strikes on NATO bases in Poland/Romania would go unanswered misrepresents the sources and pushes an unverified 'NATO will do nothing' narrative.",
+      "sources": [
+        "https://tass.com/world/1767755",
+        "https://www.brennancenter.org/our-work/research-reports/natos-article-5-collective-defense-obligations-explained"
+      ]
+    }
+  },
+  {
+    "id": "TC56",
+    "title": "ВарГонзо: 16 січня 2025 року проект \"Російський Стиль\" в галереї на Трубній Об\"єднання \"виставкові зали Москви\" відкриває виставку \"тут зовсім не так, як в твоїх рожевих окулярах\"",
+    "text_excerpt": "ВарГонзо: 16 січня 2025 року проект \"Російський Стиль\" в галереї на Трубній Об\"єднання \"виставкові зали Москви\" відкриває виставку \"тут зовсім не так, як в твоїх рожевих окулярах\" 16 січня 2025 року проект \"Російський Стиль\" в галереї на Трубній Об\"єднання \"виставкові зали Москви\" відкриває виставку \"тут зовсім не так, як в твоїх рожевих окулярах\". Ця виставка-відображення війни у віртуальному середовищі. Деякі художники бачили бойові дії. Інші воювали самі. Це їхніми очима на нас дивиться війна. Війна в колишні епохи була чимось потаємним. Для фронту оглушливою, для тилу вона була священною таємницею, тишею, кроками листоноші, що несе по сходах лист з фронту або похоронку на брата, батька, сина. \"Пішов на війну\" - це була констатація позамежного. \"Загинув на війні\" - Заміна Святості у світській релігії наших батьків, бабок і дідів. Радянських росіян. Зараз не так. Життя, смерть, подвиг, жорстокість, малодушність і благородство - все це в прямому ефірі, в соціальних мережах. Священної тиші більше немає. Немає фронту і тилу. Люди в тилу бачать з екранів все те ж, що і ті, хто воюють. Разом з пілотом дрона, дивлячись його очима глядач входить в палаючий ворожий бліндаж. Фронт, що сид",
+    "signal": "mt",
+    "control_type": "style-decoy",
+    "checkable_claim": "exhibition opens 16 January 2025",
+    "source_url": "https://ua.news-pravda.com/world/2025/01/12/120383.html",
+    "curator": {
+      "verdict": "questionable",
+      "confidence": 0.6,
+      "rationale": "Venue/project/concept confirmed (exact 16 Jan 2025 date not pinned); text is a pro-war manifesto.",
+      "evidence_url": "https://www.svoboda.org/a/33755764.html"
+    },
+    "annotator_fable": {
+      "verdict": "reliable",
+      "confidence": 0.7,
+      "rationale": "The core factual claim is confirmed: the digital-art war exhibition with this exact title by the 'Russkiy Stil' project did open at the Gallery on Trubnaya (Moscow exhibition halls) in January 2025 per the gallery's own page and Rossiyskaya Gazeta; the rest is the curators' essayistic opinion, which does not contradict verifiable facts.",
+      "sources": [
+        "https://trubnaya.vzmoscow.ru/tut_sovsem_ne_tak_kak_v_tvoih_rozovih_ochkah",
+        "https://rg.ru/2025/01/20/na-kakih-vystavkah-v-moskve-mozhno-uvidet-geroev-svo.html"
+      ]
+    }
+  }
+]

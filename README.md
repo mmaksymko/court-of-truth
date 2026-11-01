@@ -1,23 +1,37 @@
 # Court Criminalist
 
-Standalone criminalist (forensic) layer of Court of Truth. A FastAPI application
-that runs four local, key-free ML detectors over Ukrainian news and returns
-explainable signals. No OpenAI, no tribunal. The tribunal (LLM prosecutor,
-advocate, and judge) is a separate layer that will be re-integrated on top of
-this service later.
+Застосунок FastAPI, що аналізує україномовні новини у двох шарах. Форензічний шар
+працює без ключа: чотири локальні ML-детектори (`ai_generated`, `clickbait`,
+`jeansa`, `mt_translation`) оцінюють матеріал і повертають пояснювані сигнали.
+Шар трибуналу (прокурор, адвокат і суддя на основі LLM) вмикається лише тоді,
+коли задано ключ OpenAI; без ключа форензіка доступна повністю, а виклик
+трибуналу відповідає кодом 503.
 
-Detectors: `ai_generated`, `clickbait`, `jeansa`, `mt_translation`.
+## Запуск локально
 
-## Run locally
-
-Python 3.13, `uv`, and trained artifacts under `artifacts/` are required:
+Потрібні Python 3.13, `uv` та натреновані артефакти в каталозі `artifacts/`.
 
 ```bash
-uv sync --group dev --group training
+uv sync --locked --group dev --group training --group ui
 uv run python -m court
 ```
 
-The key-free forensic endpoint:
+Інтерфейс користувача запускають у другому терміналі:
+
+```bash
+uv run --no-sync streamlit run streamlit_app.py
+```
+
+Інтерфейс відкривається за адресою <http://127.0.0.1:8501> і звертається до
+локального API на <http://127.0.0.1:8000>. Адресу API змінюють через змінну
+`COURT_API_URL`. У ньому доступні два режими: локальний аналіз детекторами та
+повний судово-змагальний розгляд. Другий режим активний лише тоді, коли стан API
+підтверджує готовність Трибуналу; результат містить позиції сторін, зовнішні
+матеріали, вердикт і його ймовірнісний розподіл.
+
+## Ендпойнти
+
+Форензічний аналіз без ключа:
 
 ```bash
 curl -X POST http://localhost:8000/v1/analyze \
@@ -25,27 +39,55 @@ curl -X POST http://localhost:8000/v1/analyze \
   -d '{"title":"Заголовок","text":"Текст матеріалу"}'
 ```
 
-`GET /v1/health`, `/v1/health/live`, `/v1/health/ready`, and `/v1/detectors`
-report status and detector metadata. `/v1/analyze` and `/v1/detectors` need only
-the loaded registry.
+`POST /v1/review` додатково проводить розгляд трибуналом і потребує ключа.
+`GET /v1/detectors` повертає метадані детекторів, а `GET /v1/health`,
+`/v1/health/live` та `/v1/health/ready` звітують про стан. Виклики `/v1/analyze`
+і `/v1/detectors` спираються лише на завантажений реєстр детекторів.
+
+## Ключ трибуналу
+
+Шар трибуналу спирається на окрему групу залежностей `tribunal` (пакети `openai`
+та `openai-agents`), тож перед першим запуском її встановлюють:
+
+```bash
+uv sync --locked --group dev --group training --group ui --group tribunal
+```
+
+Ключ передають змінною `COURT_OPENAI_API_KEY` (або `OPENAI_API_KEY`), зазвичай
+через файл `.env`. Щойно ключ задано, ендпойнт `/v1/review` активується;
+використовувану модель задає змінна `COURT_MODEL`.
 
 ## Docker
 
 ```bash
-docker compose up --build app
+docker compose up --build app ui
 ```
 
-## Security boundary
+Стек `compose` монтує каталог `./artifacts`, тож використовує ті самі перевірені
+артефакти, що й локальний запуск. Якщо каталог ще не наповнено, його спершу
+наповнюють натренованими моделями:
 
-Place the app behind an authenticated, rate-limited gateway before exposing it
-publicly. `COURT_OPERATION_RATE_PER_MINUTE` and `COURT_OPERATION_CONCURRENCY`
-bound the compute-intensive endpoint; in-process limits also cap request bytes
-and concurrent operations.
+```bash
+docker compose --profile train run --rm train
+docker compose up --build app ui
+```
 
-## Quality gate
+API стає доступним на <http://127.0.0.1:8000>, а інтерфейс на
+<http://127.0.0.1:8501>.
+
+## Межа безпеки
+
+Перед публічним доступом застосунок розміщують за автентифікованим шлюзом з
+обмеженням частоти запитів. Змінні `COURT_OPERATION_RATE_PER_MINUTE` та
+`COURT_OPERATION_CONCURRENCY` стримують обчислювально важкий ендпойнт;
+внутрішні ліміти також діють на розмір запиту та кількість одночасних операцій.
+
+## Контроль якості
 
 ```bash
 bash scripts/check.sh
 ```
 
-Runs Ruff formatting/linting, mypy, branch coverage, and the full test suite.
+Скрипт встановлює групи залежностей для розробки, тренування та інтерфейсу, після
+чого запускає форматування й лінтинг Ruff, перевірку типів mypy, перевірку
+доступності Streamlit, покриття за гілками та повний набір тестів.

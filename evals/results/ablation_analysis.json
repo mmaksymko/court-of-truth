@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "input_validation": {
+    "rows": 240,
+    "cases": 60,
+    "modes": [
+      "F",
+      "B1",
+      "B2",
+      "B3"
+    ],
+    "fully_paired": true,
+    "gold_distribution": {
+      "questionable": 20,
+      "unreliable": 20,
+      "reliable": 20
+    },
+    "probabilities_validated": true
+  },
+  "bootstrap": {
+    "method": "paired_percentile",
+    "resamples": 3000,
+    "seed": 42
+  },
+  "multiple_testing": {
+    "method": "holm",
+    "family": [
+      "F_minus_B1",
+      "F_minus_B2",
+      "F_minus_B3"
+    ],
+    "alpha": 0.05
+  },
+  "modes": {
+    "F": {
+      "n": 60,
+      "correct": 54,
+      "accuracy": 0.9,
+      "accuracy_bootstrap_95_ci": [
+        0.8166666666666667,
+        0.9666666666666667
+      ],
+      "macro_f1": 0.9019138755980861,
+      "macro_f1_bootstrap_95_ci": [
+        0.815276110950453,
+        0.9671385465925696
+      ],
+      "brier": 0.1955375,
+      "brier_bootstrap_95_ci": [
+        0.11526964583333328,
+        0.29093179166666655
+      ],
+      "confusion_matrix_gold_rows": {
+        "reliable": {
+          "reliable": 17,
+          "questionable": 3,
+          "unreliable": 0
+        },
+        "questionable": {
+          "reliable": 1,
+          "questionable": 19,
+          "unreliable": 0
+        },
+        "unreliable": {
+          "reliable": 0,
+          "questionable": 2,
+          "unreliable": 18
+        }
+      },
+      "structured_output_summary": {
+        "used_evidence_ids": {
+          "mean": 9.133333333333333,
+          "median": 9.0,
+          "minimum": 4,
+          "maximum": 15,
+          "empty_verdicts": 0
+        },
+        "objections": {
+          "mean": 1.5333333333333334,
+          "median": 2.0,
+          "minimum": 0,
+          "maximum": 5,
+          "empty_verdicts": 17
+        }
+      }
+    },
+    "B1": {
+      "n": 60,
+      "correct": 51,
+      "accuracy": 0.85,
+      "accuracy_bootstrap_95_ci": [
+        0.75,
+        0.9333333333333333
+      ],
+      "macro_f1": 0.8516746411483255,
+      "macro_f1_bootstrap_95_ci": [
+        0.7541497821350762,
+        0.9332467854723651
+      ],
+      "brier": 0.24265833333333328,
+      "brier_bootstrap_95_ci": [
+        0.14446974999999992,
+        0.3603681041666666
+      ],
+      "confusion_matrix_gold_rows": {
+        "reliable": {
+          "reliable": 16,
+          "questionable": 3,
+          "unreliable": 1
+        },
+        "questionable": {
+          "reliable": 2,
+          "questionable": 18,
+          "unreliable": 0
+        },
+        "unreliable": {
+          "reliable": 0,
+          "questionable": 3,
+          "unreliable": 17
+        }
+      },
+      "structured_output_summary": {
+        "used_evidence_ids": {
+          "mean": 5.616666666666666,
+          "median": 5.0,
+          "minimum": 3,
+          "maximum": 8,
+          "empty_verdicts": 0
+        },
+        "objections": {
+          "mean": 1.0833333333333333,
+          "median": 1.0,
+          "minimum": 0,
+          "maximum": 6,
+          "empty_verdicts": 29
+        }
+      }
+    },
+    "B2": {
+      "n": 60,
+      "correct": 50,
+      "accuracy": 0.8333333333333334,
+      "accuracy_bootstrap_95_ci": [
+        0.7333333333333333,
+        0.9166666666666666
+      ],
+      "macro_f1": 0.8331816136694186,
+      "macro_f1_bootstrap_95_ci": [
+        0.730574291182194,
+        0.9173789173789174
+      ],
+      "brier": 0.2542841666666667,
+      "brier_bootstrap_95_ci": [
+        0.15839868750000005,
+        0.3628864166666666
+      ],
+      "confusion_matrix_gold_rows": {
+        "reliable": {
+          "reliable": 15,
+          "questionable": 5,
+          "unreliable": 0
+        },
+        "questionable": {
+          "reliable": 2,
+          "questionable": 16,
+          "unreliable": 2
+        },
+        "unreliable": {
+          "reliable": 0,
+          "questionable": 1,
+          "unreliable": 19
+        }
+      },
+      "structured_output_summary": {
+        "used_evidence_ids": {
+          "mean": 8.716666666666667,
+          "median": 8.5,
+          "minimum": 2,
+          "maximum": 14,
+          "empty_verdicts": 0
+        },
+        "objections": {
+          "mean": 1.3166666666666667,
+          "median": 1.0,
+          "minimum": 0,
+          "maximum": 5,
+          "empty_verdicts": 22
+        }
+      }
+    },
+    "B3": {
+      "n": 60,
+      "correct": 25,
+      "accuracy": 0.4166666666666667,
+      "accuracy_bootstrap_95_ci": [
+        0.3,
+        0.5333333333333333
+      ],
+      "macro_f1": 0.3111111111111111,
+      "macro_f1_bootstrap_95_ci": [
+        0.2038640906062625,
+        0.40580407264722074
+      ],
+      "brier": 0.7065566666666666,
+      "brier_bootstrap_95_ci": [
+        0.5775994166666663,
+        0.8342964166666671
+      ],
+      "confusion_matrix_gold_rows": {
+        "reliable": {
+          "reliable": 0,
+          "questionable": 20,
+          "unreliable": 0
+        },
+        "questionable": {
+          "reliable": 0,
+          "questionable": 20,
+          "unreliable": 0
+        },
+        "unreliable": {
+          "reliable": 0,
+          "questionable": 15,
+          "unreliable": 5
+        }
+      },
+      "structured_output_summary": {
+        "used_evidence_ids": {
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0,
+          "maximum": 0,
+          "empty_verdicts": 60
+        },
+        "objections": {
+          "mean": 4.483333333333333,
+          "median": 5.0,
+          "minimum": 0,
+          "maximum": 8,
+          "empty_verdicts": 1
+        }
+      }
+    }
+  },
+  "paired_comparisons": {
+    "F_minus_B1": {
+      "accuracy_difference": 0.050000000000000044,
+      "accuracy_difference_bootstrap_95_ci": [
+        -0.033333333333333326,
+        0.1333333333333333
+      ],
+      "macro_f1_difference": 0.05023923444976064,
+      "macro_f1_difference_bootstrap_95_ci": [
+        -0.03335449923722768,
+        0.1381480341343502
+      ],
+      "paired_correctness": {
+        "F_only_correct": 5,
+        "baseline_only_correct": 2,
+        "exact_mcnemar_two_sided_p": 0.453125,
+        "holm_adjusted_p": 0.453125
+      }
+    },
+    "F_minus_B2": {
+      "accuracy_difference": 0.06666666666666665,
+      "accuracy_difference_bootstrap_95_ci": [
+        0.0,
+        0.1499999999999999
+      ],
+      "macro_f1_difference": 0.06873226192866755,
+      "macro_f1_difference_bootstrap_95_ci": [
+        -0.0025881824610324944,
+        0.15091373692001564
+      ],
+      "paired_correctness": {
+        "F_only_correct": 5,
+        "baseline_only_correct": 1,
+        "exact_mcnemar_two_sided_p": 0.21875,
+        "holm_adjusted_p": 0.4375
+      }
+    },
+    "F_minus_B3": {
+      "accuracy_difference": 0.48333333333333334,
+      "accuracy_difference_bootstrap_95_ci": [
+        0.33333333333333337,
+        0.6166666666666667
+      ],
+      "macro_f1_difference": 0.590802764486975,
+      "macro_f1_difference_bootstrap_95_ci": [
+        0.4661548309705065,
+        0.720518703867993
+      ],
+      "paired_correctness": {
+        "F_only_correct": 31,
+        "baseline_only_correct": 2,
+        "exact_mcnemar_two_sided_p": 1.3085082173347473e-07,
+        "holm_adjusted_p": 3.925524652004242e-07
+      }
+    }
+  },
+  "interpretation_guard": "Intervals quantify sampling uncertainty on this fixed corpus; they do not remove corpus-selection, annotation, leakage, domain, topic, or model-version confounds."
+}

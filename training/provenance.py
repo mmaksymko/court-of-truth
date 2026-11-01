@@ -52,10 +52,14 @@ def build_manifest(
             "positive_index": 1,
             "calibration": "softmax",
             "threshold_selection": (
-                "highest threshold within "
-                f"{cfg.threshold_plateau_tolerance} of validation macro-F1 maximum"
+                "threshold closest to zero logit-difference among those within "
+                f"{cfg.threshold_plateau_tolerance} of the validation macro-F1 maximum"
             ),
         }
+        # The transformer head fixes the positive class at index 1 (see positive_index
+        # and the model config id2label); derive label_map from that, not from label order.
+        negative_label = next(label for label in labels if label != cfg.positive_label)
+        label_map = {negative_label: 0, cfg.positive_label: 1}
     else:
         implementation = {
             "sublinear_tf": True,
@@ -65,6 +69,7 @@ def build_manifest(
                 f"{cfg.threshold_candidates}, {cfg.threshold_objective} on validation only"
             ),
         }
+        label_map = {label: index for index, label in enumerate(labels)}
     return Manifest(
         detector_id=cfg.id,
         version=now.strftime("%Y-%m-%dT%H%M%SZ"),
@@ -87,7 +92,7 @@ def build_manifest(
         n_val=sizes[1],
         n_test=sizes[2],
         labels=(labels[0], labels[1]),
-        label_map={label: index for index, label in enumerate(labels)},
+        label_map=label_map,
         positive_label=cfg.positive_label,
         scope=cfg.scope,
         decision_threshold=threshold,

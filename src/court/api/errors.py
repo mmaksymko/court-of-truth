@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 
 from court.api.middleware import error_response
 from court.ingest.fetch import IngestError
+from court.tribunal.errors import TribunalError
 
 logger = logging.getLogger("court.api")
 
@@ -18,6 +19,10 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(IngestError)
     async def ingest_error(_request: Request, exc: IngestError) -> JSONResponse:
+        return error_response(exc.status_code, exc.code, exc.message)
+
+    @app.exception_handler(TribunalError)
+    async def tribunal_error(_request: Request, exc: TribunalError) -> JSONResponse:
         return error_response(exc.status_code, exc.code, exc.message)
 
     @app.exception_handler(HTTPException)

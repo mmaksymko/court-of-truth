@@ -218,7 +218,7 @@ def decontaminate_against_external(
     return clean, {
         "gold_used_for_dedup_only": True,
         "gold_columns_read_before_fit": [text_field],
-        "protected_split": "jeansa_gold (rows never removed)",
+        "protected_split": "external gold (rows never removed)",
         "before_rows": before,
         "after_rows": after,
         "removed_rows": {name: before[name] - after[name] for name in SPLIT_NAMES},

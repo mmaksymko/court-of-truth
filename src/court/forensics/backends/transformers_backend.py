@@ -15,7 +15,11 @@ def load(model_dir: str, *, max_length: int, positive_index: int) -> Transformer
     import torch  # noqa: PLC0415
     from transformers import AutoModelForSequenceClassification, AutoTokenizer  # noqa: PLC0415
 
-    tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_dir,
+        local_files_only=True,
+        fix_mistral_regex=True,
+    )
     model = AutoModelForSequenceClassification.from_pretrained(
         model_dir,
         local_files_only=True,

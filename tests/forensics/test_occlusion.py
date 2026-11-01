@@ -10,7 +10,9 @@ def test_occlusion_returns_word_driving_positive():
 
 
 def test_occlusion_strips_edge_punctuation():
-    assert occlusion_evidence(_only_when("shocking"), "this shocking! headline", k=3) == ["shocking"]
+    assert occlusion_evidence(_only_when("shocking"), "this shocking! headline", k=3) == [
+        "shocking"
+    ]
 
 
 def test_occlusion_short_text_returns_empty():

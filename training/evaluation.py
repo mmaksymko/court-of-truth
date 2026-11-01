@@ -1,12 +1,10 @@
 from itertools import pairwise
-from pathlib import Path
 
 import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import brier_score_loss, f1_score, recall_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
-from court.forensics.text_transforms import transform_for
 from training.config import DetectorConfig
 from training.pipelines import build_pipeline
 from training.transfer.splits import seeded_outlet_split
@@ -21,7 +19,7 @@ def split_data(
             group_field=cfg.group_field,
             seed=seed,
         )
-        parts = tuple(grouped[name] for name in ("train", "val", "test"))
+        parts = (grouped["train"], grouped["val"], grouped["test"])
     elif cfg.split_field and cfg.split_field in frame.columns:
         by = frame[cfg.split_field]
         actual = {str(value) for value in by.unique()}
@@ -44,11 +42,9 @@ def split_data(
 
 def calibrate(cfg: DetectorConfig, train: pd.DataFrame, seed: int) -> CalibratedClassifierCV:
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
-    return CalibratedClassifierCV(
-        build_pipeline(cfg, seed),
-        cv=cv,
-        ensemble=False,
-    ).fit(train["_x"], train[cfg.label_field])
+    model = CalibratedClassifierCV(build_pipeline(cfg, seed), cv=cv, ensemble=False)
+    model.fit(train["_x"], train[cfg.label_field])
+    return model
 
 
 def tune_threshold(
@@ -104,17 +100,3 @@ def evaluate(
         negative: round(recall_score(truth, predicted, pos_label=False), 4),
     }
     return metrics, recall
-
-
-def gold_recall(
-    model: CalibratedClassifierCV,
-    cfg: DetectorConfig,
-    positive_index: int,
-    threshold: float,
-    data_root: Path,
-) -> float:
-    gold = pd.read_csv(data_root / "jeansa_gold.csv")
-    text = gold[cfg.text_field].fillna("").map(lambda value: transform_for(cfg.id, value))
-    text = text[text.str.len() > 0]
-    proba = model.predict_proba(text)[:, positive_index]
-    return round(float((proba >= threshold).mean()), 4)

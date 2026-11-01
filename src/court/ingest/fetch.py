@@ -8,7 +8,7 @@ from pydantic import HttpUrl
 from court.config import Settings
 from court.ingest.content import check_response, extract, read_limited
 from court.ingest.errors import IngestError
-from court.ingest.schemas import Article, ReviewRequest
+from court.ingest.schemas import Article
 from court.ingest.url_security import (
     Resolver,
     resolve_host,
@@ -19,18 +19,6 @@ _REDIRECTS = {301, 302, 303, 307, 308}
 _SUCCESS_MIN = 200
 _SUCCESS_MAX = 300
 _MAX_ARTICLE_CHARS = 100_000
-
-
-async def resolve(
-    request: ReviewRequest,
-    client: httpx.AsyncClient,
-    settings: Settings,
-    resolver: Resolver | None = None,
-    executor: Executor | None = None,
-) -> Article:
-    if request.url is None:
-        return Article(title=(request.title or "").strip(), text=(request.text or "").strip())
-    return await fetch_article(str(request.url), client, settings, resolver, executor)
 
 
 async def fetch_article(

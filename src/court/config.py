@@ -6,6 +6,7 @@ from pydantic import (
     AliasChoices,
     BeforeValidator,
     Field,
+    SecretStr,
     field_validator,
 )
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -30,6 +31,13 @@ class Settings(BaseSettings):
         populate_by_name=True,
     )
 
+    openai_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias=AliasChoices("COURT_OPENAI_API_KEY", "OPENAI_API_KEY"),
+    )
+    model: str = "gpt-5.6-luna"
+    llm_max_turns: int = Field(default=8, gt=0, le=20)
+
     artifacts_dir: Path = Path("artifacts")
     enabled_detectors: CsvList = []
     detector_workers: int = Field(default=5, gt=0, le=16)
@@ -39,6 +47,8 @@ class Settings(BaseSettings):
     fetch_max_bytes: int = Field(default=2_000_000, gt=0)
     fetch_timeout_s: float = Field(default=15.0, gt=0)
     fetch_max_redirects: int = Field(default=3, ge=0, le=10)
+    # Where experiment runs store text snapshots of evidence pages; unset disables them.
+    evidence_cache_dir: Path | None = None
 
     operation_rate_per_minute: int = Field(default=10, gt=0)
     operation_concurrency: int = Field(default=4, gt=0)
